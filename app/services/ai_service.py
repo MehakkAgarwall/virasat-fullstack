@@ -5,10 +5,12 @@ AI service - generates tourist-friendly content using Google Gemini's free-tier 
 """
 
 import os
+import logging
 import requests
 from dotenv import load_dotenv
 
 load_dotenv()
+logger = logging.getLogger("kalatrail")
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_MODEL = "gemini-3.5-flash"
@@ -30,8 +32,8 @@ def _call_gemini(prompt: str) -> str:
 
     response = requests.post(GEMINI_API_URL, params=params, json=body, headers=headers, timeout=30)
     if not response.ok:
-        # Print the real error body so failures are debuggable instead of a bare status code
-        print(f"[ai_service] Gemini API error {response.status_code}: {response.text}")
+        # Log the real error body so failures are debuggable instead of a bare status code
+        logger.error(f"Gemini API error {response.status_code}: {response.text}")
     response.raise_for_status()
     data = response.json()
 

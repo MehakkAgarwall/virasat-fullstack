@@ -3,6 +3,7 @@ Routes for trip/route planning.
 POST /trip/crafts-along-route -> given start + end coordinates, returns crafts near the route
 """
 
+import logging
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional
@@ -10,6 +11,7 @@ from app.services.db_service import get_connection
 from app.services.geo_service import get_route, find_crafts_near_route
 from app.services.ai_service import generate_trip_summary
 
+logger = logging.getLogger("kalatrail")
 router = APIRouter(prefix="/trip", tags=["trip"])
 
 
@@ -39,11 +41,13 @@ def crafts_along_route(req: RouteRequest):
 
     # 2. Pull all crafts from DB
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM crafts")
-    all_crafts = cursor.fetchall()
-    cursor.close()
-    conn.close()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM crafts")
+        all_crafts = cursor.fetchall()
+        cursor.close()
+    finally:
+        conn.close()
 
     # 3. Filter to crafts near the route
     matched_crafts = find_crafts_near_route(route_points, all_crafts, buffer_km=req.buffer_km)
@@ -57,7 +61,7 @@ def crafts_along_route(req: RouteRequest):
             trip_summary = generate_trip_summary(matched_crafts, req.start_label, req.end_label)
         except Exception as e:
             trip_summary = None
-            print(f"[trip_routes] AI summary generation failed (non-fatal): {e}")
+            logger.warning(f"AI summary generation failed (non-fatal): {e}")
 
     return {
         "route_point_count": len(route_points),
