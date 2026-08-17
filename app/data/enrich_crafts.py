@@ -18,6 +18,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 from app.services.db_service import get_connection  # noqa: E402
 from app.services.ai_service import generate_craft_description  # noqa: E402
 
+MAX_RETRIES = 3
+RETRY_DELAY = 20  # seconds, on top of the normal 13s pacing
+
 
 def enrich():
     conn = get_connection()
@@ -38,14 +41,26 @@ def enrich():
     success_count = 0
 
     for craft in crafts_to_enrich:
-        try:
-            ai_desc = generate_craft_description(
-                name=craft["name"],
-                category=craft["category"],
-                state=craft["state"],
-                district=craft["district"],
-                raw_description=craft["description"],
-            )
+        ai_desc = None
+        last_error = None
+
+        for attempt in range(1, MAX_RETRIES + 1):
+            try:
+                ai_desc = generate_craft_description(
+                    name=craft["name"],
+                    category=craft["category"],
+                    state=craft["state"],
+                    district=craft["district"],
+                    raw_description=craft["description"],
+                )
+                break  # success, stop retrying
+            except Exception as e:
+                last_error = e
+                print(f"  attempt {attempt}/{MAX_RETRIES} failed for {craft['name']}: {type(e).__name__}: {e}")
+                if attempt < MAX_RETRIES:
+                    time.sleep(RETRY_DELAY)
+
+        if ai_desc is not None:
             update_cursor.execute(
                 "UPDATE crafts SET ai_description = %s WHERE id = %s",
                 (ai_desc, craft["id"]),
@@ -53,8 +68,8 @@ def enrich():
             conn.commit()
             success_count += 1
             print(f"  [{success_count}/{len(crafts_to_enrich)}] {craft['name']} - done")
-        except Exception as e:
-            print(f"  FAILED for {craft['name']}: {e}")
+        else:
+            print(f"  GAVE UP on {craft['name']} after {MAX_RETRIES} attempts: {last_error}")
 
         # Free tier allows 5 requests/minute - wait between calls to stay under that limit
         time.sleep(13)
