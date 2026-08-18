@@ -6,4 +6,4 @@ __pycache__/
 *.log
 kalaTrail.sql
 *.session.sql
-check.sql
+check.sql.vscode/
