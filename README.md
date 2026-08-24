@@ -1,4 +1,4 @@
-# KalaTrail Backend
+# Virasat Backend
 
 AI-powered API that discovers GI-tagged Indian handicrafts along a tourist's travel route, generates
 tourist-friendly descriptions and a trip summary, and helps connect travelers to underrepresented craft
