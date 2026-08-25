@@ -1,0 +1,129 @@
+/* Reference-led Cultural Trail result: live route data remains in the Planner; this layer only composes it as an editorial itinerary. */
+.cultural-journey-hero-results {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 48rem;
+  padding: 2.1rem 0 1.7rem;
+  background:
+    linear-gradient(90deg, rgba(3, 20, 14, .97) 0%, rgba(3, 20, 14, .91) 47%, rgba(12, 17, 13, .75) 62%, rgba(17, 21, 14, .87) 100%),
+    url('/manus-storage/cultural-trail-artisan-route-hero_974117e4.jpg') center / cover no-repeat;
+}
+
+.cultural-journey-hero-results::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 28% 68%, rgba(219, 165, 79, .11), transparent 24%),
+    repeating-linear-gradient(105deg, transparent 0 74px, rgba(229, 186, 103, .045) 75px 76px, transparent 77px 150px);
+}
+
+.cultural-journey-hero-results > .container { min-height: 43rem; display: flex; flex-direction: column; }
+.cultural-journey-hero-results .planner-breadcrumb { margin-bottom: .75rem; color: rgba(242, 224, 187, .75); }
+.cultural-journey-hero-results .journey-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.22fr) minmax(20rem, .78fr);
+  align-items: stretch;
+  flex: 1;
+  gap: 0;
+  max-width: 100%;
+  min-height: 35rem;
+  border: 1px solid rgba(219, 175, 94, .57);
+  border-bottom: 0;
+}
+.cultural-journey-hero-results .journey-hero-grid > div:first-child {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  padding: clamp(3rem, 8vw, 7.5rem) clamp(2rem, 7vw, 6.8rem) clamp(2.6rem, 6vw, 5.6rem);
+  background: linear-gradient(90deg, rgba(3, 20, 14, .56), rgba(3, 20, 14, .16));
+}
+.cultural-journey-hero-results .eyebrow { color: #e0b369; letter-spacing: .15em; }
+.cultural-journey-hero-results .journey-hero-grid h1 {
+  max-width: 47rem;
+  margin: 1.35rem 0 1.2rem;
+  color: #f7e5c2;
+  font-size: clamp(3.8rem, 6.6vw, 7.65rem);
+  line-height: .9;
+  letter-spacing: -.055em;
+  text-wrap: balance;
+}
+.cultural-journey-hero-results .journey-hero-grid h1 em { color: #d99669; font-weight: inherit; }
+.cultural-journey-hero-results .journey-hero-grid > div:first-child > p {
+  max-width: 38rem;
+  margin: 0;
+  color: rgba(246, 229, 199, .86);
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(.88rem, 1.2vw, 1.08rem);
+  line-height: 1.8;
+}
+.cultural-journey-hero-results .journey-route { margin-top: 2.1rem; color: #f3deb2; }
+.cultural-journey-hero-results .journey-route strong { color: #e3b76e; background: rgba(226, 180, 94, .15); }
+.cultural-journey-hero-results .journey-story-rail { display: none; }
+.cultural-journey-hero-results .journey-hero-note {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: clamp(2.2rem, 4vw, 4rem) clamp(1.6rem, 3.2vw, 3.45rem);
+  border-left: 1px solid rgba(219, 175, 94, .64);
+  background: linear-gradient(90deg, rgba(18, 20, 13, .88), rgba(24, 20, 13, .56));
+  box-shadow: -2rem 0 4rem rgba(0, 0, 0, .18);
+}
+.cultural-journey-hero-results .journey-hero-note::after { content: none; }
+.cultural-journey-hero-results .journey-hero-note p {
+  margin: 1rem 0 auto;
+  color: #f5e2bd;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(1.62rem, 2.15vw, 2.6rem);
+  line-height: 1.08;
+  text-wrap: balance;
+}
+.cultural-journey-hero-results .journey-hero-note > span:last-of-type {
+  margin-top: 1.8rem;
+  color: #e4bc74;
+  font-family: "Manrope", sans-serif;
+  font-size: .69rem;
+  font-weight: 800;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+.cultural-journey-hero-results .journey-service-note { margin-top: 1.15rem; align-self: start; color: #e4bc74; }
+.cultural-journey-hero-results .planner-route-form-compact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto;
+  gap: .55rem;
+  align-items: end;
+  margin: 0;
+  padding: .9rem 1.15rem;
+  border: 1px solid rgba(219, 175, 94, .57);
+  background: rgba(3, 18, 13, .91);
+}
+.cultural-journey-hero-results .planner-route-form-compact .planner-route-form-head,
+.cultural-journey-hero-results .planner-route-form-compact .planner-route-promise,
+.cultural-journey-hero-results .planner-route-form-compact > small { display: none; }
+.cultural-journey-hero-results .planner-route-form-compact label { margin: 0; }
+.cultural-journey-hero-results .planner-route-form-compact label > span { color: #dcae61; font-size: .62rem; }
+.cultural-journey-hero-results .planner-route-form-compact label > div { border-color: rgba(219, 175, 94, .42); background: rgba(255, 247, 224, .06); }
+.cultural-journey-hero-results .planner-route-form-compact input { color: #f6e4bd; }
+.cultural-journey-hero-results .planner-route-form-compact .planner-swap { align-self: end; margin-bottom: .25rem; color: #dfb269; }
+.cultural-journey-hero-results .planner-route-form-compact .button-primary { align-self: end; min-height: 2.5rem; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .cultural-journey-hero-results::before { animation: cultural-route-veil 16s ease-in-out infinite alternate; }
+}
+@keyframes cultural-route-veil { from { opacity: .65; transform: translateX(-.7%); } to { opacity: 1; transform: translateX(.7%); } }
+
+@media (max-width: 800px) {
+  .cultural-journey-hero-results { min-height: auto; padding: 1.1rem 0 5.8rem; background-position: 57% center; }
+  .cultural-journey-hero-results > .container { min-height: auto; }
+  .cultural-journey-hero-results .journey-hero-grid { grid-template-columns: 1fr; min-height: 0; }
+  .cultural-journey-hero-results .journey-hero-grid > div:first-child { min-height: 33rem; padding: 10rem 1.35rem 2.4rem; background: linear-gradient(0deg, rgba(3, 20, 14, .97), rgba(3, 20, 14, .31)); }
+  .cultural-journey-hero-results .journey-hero-grid h1 { font-size: clamp(3.35rem, 15vw, 5.6rem); }
+  .cultural-journey-hero-results .journey-hero-note { min-height: 23rem; border-top: 1px solid rgba(219, 175, 94, .64); border-left: 0; }
+  .cultural-journey-hero-results .journey-hero-note p { font-size: clamp(1.85rem, 8vw, 2.55rem); }
+  .cultural-journey-hero-results .planner-route-form-compact { grid-template-columns: 1fr; padding: 1rem; }
+  .cultural-journey-hero-results .planner-route-form-compact .planner-swap { display: none; }
+}

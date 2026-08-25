@@ -1,0 +1,1 @@
+ALTER TABLE `traveller_reflections` ADD `reviewPhotoUrl` varchar(1024) DEFAULT '' NOT NULL;

@@ -1,0 +1,43 @@
+.craft-live-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 15px 0 -3px;
+  padding: 7px 9px;
+  border: 1px solid rgba(246, 240, 230, 0.28);
+  border-radius: 999px;
+  color: rgba(246, 240, 230, 0.86);
+  background: rgba(9, 37, 32, 0.36);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  line-height: 1;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.craft-live-status.is-live svg { color: #efca77; }
+.craft-live-status.is-fallback { border-color: rgba(232, 166, 118, 0.55); color: #f1c0a2; }
+
+button.craft-live-status {
+  appearance: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 160ms var(--ease-out, ease-out), border-color 160ms var(--ease-out, ease-out), background 160ms var(--ease-out, ease-out);
+}
+
+button.craft-live-status:hover {
+  border-color: rgba(239, 202, 119, 0.72);
+  background: rgba(9, 37, 32, 0.66);
+}
+
+button.craft-live-status:active { transform: scale(0.97); }
+
+button.craft-live-status:focus-visible {
+  outline: 2px solid #efca77;
+  outline-offset: 3px;
+}
+
+@media (max-width: 700px) {
+  .craft-live-status { margin-top: 12px; }
+}

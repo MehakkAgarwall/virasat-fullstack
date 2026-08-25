@@ -1,0 +1,74 @@
+/* Artisan workspace: retain the dark heritage chamber while restoring a clear ivory, gold, and terracotta reading hierarchy. */
+.role-app-artisan .role-workspace,
+.role-app-artisan .role-workspace-main { background:#0b2b24; color:#fff1da; }
+.role-app-artisan .role-workspace-main { background-image:radial-gradient(circle at 88% 5%,rgba(218,174,96,.13),transparent 26%),linear-gradient(120deg,rgba(255,241,218,.035),transparent 45%); }
+.role-app-artisan .role-workspace-header { background:rgba(7,30,25,.96); border-bottom-color:rgba(239,199,119,.24); color:#fff1da; }
+.role-app-artisan .role-workspace-header:before,
+.role-app-artisan .role-switch,
+.role-app-artisan .role-header-location { color:#fff1da; }
+.role-app-artisan .role-header-divider { background:#e7b568; }
+
+.role-app-artisan .workspace-hero .eyebrow,
+.role-app-artisan .role-page > .eyebrow,
+.role-app-artisan .traveller-signal-panel > div .eyebrow { color:#f0ca7c; }
+.role-app-artisan .workspace-hero h2,
+.role-app-artisan .role-page h2 { color:#fff3dd; letter-spacing:-.045em; }
+.role-app-artisan .workspace-hero h2 em,
+.role-app-artisan .role-page h2 em,
+.role-app-artisan .traveller-signal-panel h3 em { position:relative; display:inline-block; color:#eda979; font-family:"Italianno","Pinyon Script",cursive; font-size:1.22em; font-style:normal; font-weight:400; letter-spacing:.018em; line-height:.62; text-shadow:0 5px 14px rgba(0,0,0,.35); }
+.role-app-artisan .workspace-hero h2 em::after,
+.role-app-artisan .traveller-signal-panel h3 em::after { position:absolute; right:2%; bottom:-.2em; left:4%; height:1px; background:linear-gradient(90deg,transparent,#e9bd6e 25%,rgba(233,189,110,.18)); content:""; transform:rotate(-2deg); }
+.role-app-artisan .workspace-hero > div > p,
+.role-app-artisan .role-page > p,
+.role-app-artisan .body-copy { color:rgba(255,241,218,.82)!important; text-shadow:0 1px 0 rgba(0,0,0,.28); }
+
+.role-app-artisan .interest-detail-grid article,
+.role-app-artisan .role-metric,
+.role-app-artisan .content-panel,
+.role-app-artisan .role-table,
+.role-app-artisan .experience-admin-grid article,
+.role-app-artisan .role-form { border-color:rgba(239,199,119,.27); background:linear-gradient(145deg,#173f35,#0f342b); box-shadow:inset 0 1px rgba(255,241,218,.06),11px 13px 0 rgba(2,18,14,.19); }
+.role-app-artisan .interest-detail-grid article { min-height:170px; }
+.role-app-artisan .interest-large,
+.role-app-artisan .role-metric-value { color:#f3b580; text-shadow:0 3px 14px rgba(0,0,0,.28); }
+.role-app-artisan .interest-detail-grid p,
+.role-app-artisan .role-metric-label { color:#fff1da!important; font-weight:800; text-shadow:0 1px 0 rgba(0,0,0,.3); }
+.role-app-artisan .role-metric-note,
+.role-app-artisan .interest-detail-grid small { color:rgba(255,241,218,.76)!important; }
+.role-app-artisan .interest-progress { background:rgba(255,241,218,.18); box-shadow:inset 0 1px rgba(0,0,0,.25); }
+.role-app-artisan .interest-progress i { background:linear-gradient(90deg,#e3a36f,#f2cf83); box-shadow:0 0 12px rgba(239,188,103,.34); }
+
+.role-app-artisan .traveller-signal-panel { border-color:rgba(239,199,119,.55); background:linear-gradient(120deg,#164338,#0e332a); box-shadow:inset 0 1px rgba(255,241,218,.06); }
+.role-app-artisan .traveller-signal-panel h3 { color:#fff3dd!important; letter-spacing:-.04em; }
+.role-app-artisan .traveller-signal-list article { border-left-color:#f0c56f; background:rgba(4,27,22,.72); }
+.role-app-artisan .traveller-signal-list article > span,
+.role-app-artisan .traveller-signal-list article small,
+.role-app-artisan .traveller-signal-note { color:rgba(255,241,218,.8)!important; }
+.role-app-artisan .traveller-signal-list article strong { color:#fff3dd!important; }
+.role-app-artisan .traveller-signal-note { border-top-color:rgba(239,199,119,.2); }
+
+.role-app-artisan .content-panel h3,
+.role-app-artisan .content-panel strong,
+.role-app-artisan .role-table-row b,
+.role-app-artisan .role-form label { color:#fff3dd!important; }
+.role-app-artisan .content-panel .eyebrow,
+.role-app-artisan .content-panel small,
+.role-app-artisan .role-table-row,
+.role-app-artisan .role-table-head,
+.role-app-artisan .experience-admin-grid article p { color:rgba(255,241,218,.75)!important; }
+.role-app-artisan .content-panel-head button,
+.role-app-artisan .underlined-link,
+.role-app-artisan .table-action { color:#f3c56e!important; border-bottom-color:rgba(243,197,110,.46); }
+.role-app-artisan .role-table-head { background:rgba(255,241,218,.08); border-bottom-color:rgba(239,199,119,.2); }
+.role-app-artisan .role-table-row { border-top-color:rgba(239,199,119,.16); }
+.role-app-artisan .role-form input,
+.role-app-artisan .role-form select,
+.role-app-artisan .role-form textarea { border-color:rgba(239,199,119,.34); background:#08261f; color:#fff3dd; }
+.role-app-artisan .role-form input::placeholder,
+.role-app-artisan .role-form textarea::placeholder { color:rgba(255,241,218,.48); }
+
+@media (max-width:700px) {
+  .role-app-artisan .workspace-hero h2 { font-size:clamp(3.45rem,15vw,4.7rem); }
+  .role-app-artisan .interest-detail-grid article { min-height:0; }
+  .role-app-artisan .traveller-signal-panel { padding:19px; }
+}

@@ -1,0 +1,8 @@
+/* Explore filter repair: category/recognition choices remain visible, keyboard-reachable, and visibly report their current result set. */
+.explore-editorial-page .filter-pill { cursor:pointer; }
+.explore-editorial-page .filter-pill:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
+.explore-editorial-page .filter-pill-active .filter-count { color:#f3cc78; }
+.explore-editorial-page .explore-filter-feedback { margin-top:.8rem; color:#4c6359; font-family:monospace; font-size:.66rem; letter-spacing:.035em; }
+.explore-editorial-page .explore-filter-feedback b { color:var(--terracotta); font-size:.88rem; }
+.explore-editorial-page .explore-filter-feedback span { margin:0 .32rem; color:var(--gold); }
+@media (max-width:700px) { .explore-editorial-page .explore-filter-feedback { font-size:.61rem; } }

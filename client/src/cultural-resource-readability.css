@@ -1,0 +1,83 @@
+/* Cultural discovery cards use light archival paper: their text must remain dark ink, not gold-on-ivory. */
+.cultural-resource-explorer {
+  background: linear-gradient(180deg, rgba(255, 253, 247, 0.72), rgba(246, 240, 230, 0.92));
+  border-block: 1px solid rgba(179, 138, 74, 0.22);
+}
+
+.cultural-resource-explorer .experience-admin-grid article {
+  min-height: 274px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: linear-gradient(135deg, #fffdf7 0%, #f6ecdc 100%) !important;
+  border: 1px solid rgba(157, 113, 49, 0.42) !important;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.85), 0 12px 26px rgba(38, 48, 37, 0.08) !important;
+}
+
+.cultural-resource-explorer .experience-admin-grid article::before {
+  opacity: 1 !important;
+  border-color: rgba(179, 138, 74, 0.34) !important;
+}
+
+.cultural-resource-explorer .experience-admin-grid article .eyebrow {
+  color: #74511f !important;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+}
+
+.cultural-resource-explorer .experience-admin-grid article h3 {
+  color: #123f35 !important;
+  margin-top: 21px;
+  font-size: clamp(31px, 2.5vw, 42px);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+}
+
+.cultural-resource-explorer .experience-admin-grid article p {
+  color: #314840 !important;
+  max-width: 60ch;
+  margin-top: 17px;
+  font-family: "Manrope", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.72;
+}
+
+.cultural-resource-explorer .experience-admin-grid article small {
+  color: #72521f !important;
+  margin-top: 14px;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.075em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.cultural-resource-explorer .experience-admin-grid article .underlined-link {
+  color: #5f3b13 !important;
+  margin-top: auto;
+  padding-top: 20px;
+  border-bottom-color: rgba(95, 59, 19, 0.52) !important;
+  font-weight: 850;
+}
+
+.cultural-resource-explorer .experience-admin-grid article .underlined-link:hover,
+.cultural-resource-explorer .experience-admin-grid article .underlined-link:focus-visible {
+  color: #173f35 !important;
+  border-bottom-color: #173f35 !important;
+  outline: none;
+}
+
+@media (max-width: 700px) {
+  .cultural-resource-explorer .experience-admin-grid article {
+    min-height: 0;
+    padding: 26px 22px 23px;
+  }
+
+  .cultural-resource-explorer .experience-admin-grid article h3 {
+    font-size: 34px;
+  }
+}

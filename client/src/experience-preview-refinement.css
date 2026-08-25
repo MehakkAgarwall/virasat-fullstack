@@ -1,0 +1,129 @@
+.journey-preview-frame-still .journey-preview-frame-media {
+  animation: virasat-preview-drift 12s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+
+.experience-preview-hero {
+  overflow: hidden;
+  position: relative;
+}
+
+.experience-preview-hero img,
+.experience-preview-hero video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 22rem;
+  object-fit: cover;
+}
+
+.experience-preview-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 38%;
+  pointer-events: none;
+  background: linear-gradient(transparent, rgba(10, 30, 22, .72));
+}
+
+.experience-preview-hero > .eyebrow {
+  position: absolute;
+  z-index: 1;
+  left: 1.25rem;
+  right: 1.25rem;
+  bottom: 1.15rem;
+  color: var(--ivory, #f4e5ce);
+}
+
+.booking-progress {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .35rem;
+  margin-top: 1.35rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(110, 82, 42, .24);
+}
+
+.booking-progress-step {
+  position: relative;
+  display: grid;
+  gap: .45rem;
+  color: rgba(42, 56, 44, .52);
+  font: 600 .62rem/1.2 Manrope, sans-serif;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.booking-progress-step i {
+  display: block;
+  width: .55rem;
+  height: .55rem;
+  border: 1px solid rgba(110, 82, 42, .45);
+  border-radius: 50%;
+  background: #f4e5ce;
+}
+
+.booking-progress-step-active {
+  color: #234d39;
+}
+
+.booking-progress-step-active i {
+  border-color: #b98245;
+  background: #b98245;
+  box-shadow: 0 0 0 .2rem rgba(185, 130, 69, .14);
+}
+
+.booking-progress-rejected .booking-progress-step-active:last-child {
+  color: #8d4f42;
+}
+
+.traveller-signal-list article {
+  position: relative;
+  border-left: 2px solid rgba(216, 173, 98, .72);
+  background: rgba(18, 55, 42, .72);
+}
+
+.traveller-signal-list article strong {
+  color: #f4e5ce;
+}
+
+.booking-request-state {
+  display: inline-block;
+  margin-bottom: .45rem;
+  color: #e4bd74;
+  font: 700 .62rem/1.2 Manrope, sans-serif;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.booking-request-craft {
+  color: rgba(244, 229, 206, .92) !important;
+  letter-spacing: .04em;
+}
+
+.traveller-signal-list article small {
+  color: rgba(244, 229, 206, .76);
+}
+
+@keyframes virasat-preview-drift {
+  from { transform: scale(1.02) translate3d(-.4%, 0, 0); }
+  to { transform: scale(1.08) translate3d(.4%, -1.2%, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journey-preview-frame-still .journey-preview-frame-media {
+    animation: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .experience-preview-hero img,
+  .experience-preview-hero video {
+    min-height: 16rem;
+  }
+
+  .booking-progress-step {
+    font-size: .54rem;
+    letter-spacing: .08em;
+  }
+}

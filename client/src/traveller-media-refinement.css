@@ -1,0 +1,31 @@
+.experience-watch-section { background: #f2ead8; color: #183b2f; }
+.experience-watch-heading { max-width: 640px; margin-bottom: 2rem; }
+.experience-watch-heading h2, .experience-detour-section h2 { margin: .35rem 0 .75rem; font-size: clamp(2.3rem, 5vw, 4.8rem); line-height: .95; }
+.experience-watch-heading p { max-width: 560px; font-size: 1rem; line-height: 1.7; }
+.experience-media-stage { position: relative; min-height: min(58vw, 620px); overflow: hidden; background: #08291f; border: 1px solid rgba(183, 134, 61, .45); box-shadow: 0 26px 80px rgba(4, 37, 29, .22); }
+.experience-media-stage > img, .experience-media-stage > video, .experience-media-stage > iframe { width: 100%; height: 100%; min-height: min(58vw, 620px); display: block; object-fit: cover; border: 0; }
+.experience-media-stage::after { content: ""; pointer-events: none; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(4,37,29,.55)); }
+.experience-media-badge { position: absolute; z-index: 1; left: 1.2rem; bottom: 1.2rem; display: inline-flex; align-items: center; gap: .45rem; padding: .58rem .8rem; color: #f8efd9; background: rgba(4, 37, 29, .82); border: 1px solid rgba(220, 178, 93, .8); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
+.experience-gallery-strip { display: flex; gap: .75rem; overflow-x: auto; padding: 1rem 0 .25rem; }
+.experience-gallery-thumb { width: 115px; height: 78px; flex: 0 0 auto; padding: 0; overflow: hidden; border: 1px solid rgba(24,59,47,.2); background: transparent; cursor: pointer; }
+.experience-gallery-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .24s var(--ease-out, ease-out); }
+.experience-gallery-thumb:hover img, .experience-gallery-thumb-active img { transform: scale(1.06); }
+.experience-gallery-thumb-active { border-color: #b7863d; box-shadow: 0 0 0 2px rgba(183,134,61,.22); }
+.experience-discovery-steps { display: flex; align-items: center; flex-wrap: wrap; gap: .55rem; margin-top: 1.5rem; color: #745630; font-size: .72rem; letter-spacing: .09em; text-transform: uppercase; }
+.experience-discovery-steps i { width: 2.3rem; height: 1px; background: #b7863d; }
+.experience-detour-section { background: #062b21; color: #f5ebd2; }
+.detour-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(250px, .65fr); gap: clamp(2rem, 7vw, 7rem); align-items: center; }
+.detour-layout > div > p { max-width: 590px; color: rgba(245,235,210,.78); line-height: 1.75; }
+.detour-route-visual { display: flex; align-items: center; gap: .7rem; margin-top: 2rem; padding: 1.2rem 0; overflow-x: auto; color: #f4e7ce; font-size: .78rem; letter-spacing: .04em; white-space: nowrap; }
+.detour-route-visual i { height: 1px; min-width: 42px; background: linear-gradient(90deg, #b7863d, rgba(183,134,61,.25)); }
+.detour-route-visual .detour-stop-dot { min-width: 12px; height: 12px; border-radius: 50%; background: #dfaf5b; box-shadow: 0 0 0 6px rgba(223,175,91,.15), 0 0 26px #dfaf5b; }
+.detour-route-visual strong { color: #dfaf5b; font-family: "Cormorant Garamond", serif; font-size: 1.2rem; }
+.worth-detour-card { padding: 1.7rem; background: #f1e7d1; color: #123a2e; border: 1px solid rgba(220,178,93,.75); box-shadow: 14px 16px 0 rgba(183,134,61,.16); }
+.worth-detour-card h3 { margin: .5rem 0 1rem; font-size: 2.5rem; line-height: .95; }
+.worth-detour-card > div { display: grid; gap: .75rem; padding: 1rem 0; border-top: 1px solid rgba(18,58,46,.15); border-bottom: 1px solid rgba(18,58,46,.15); }
+.worth-detour-card span { display: flex; align-items: center; gap: .45rem; font-size: .85rem; }
+.worth-detour-card > b { display: block; padding-top: 1rem; color: #a65434; }
+.traveller-managed-profile { margin-top: 2.2rem; }
+.traveller-profile-form { margin-top: 2rem; }
+.traveller-profile-logout { margin-top: 2rem; }
+@media (max-width: 720px) { .experience-media-stage, .experience-media-stage > img, .experience-media-stage > video, .experience-media-stage > iframe { min-height: 58vw; } .detour-layout { grid-template-columns: 1fr; } .experience-discovery-steps i { min-width: 1.1rem; } .experience-gallery-thumb { width: 88px; height: 62px; } }
