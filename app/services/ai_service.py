@@ -17,8 +17,19 @@ GEMINI_MODEL = "gemini-3.5-flash"
 GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 
-def _call_gemini(prompt: str) -> str:
-    """Sends a single-turn prompt to Gemini and returns the text response."""
+def _call_gemini(prompt: str, timeout: int = 8) -> str:
+    """Sends a single-turn prompt to Gemini and returns the text response.
+
+    timeout defaults to 8s (was 30s). generate_trip_summary is a best-effort
+    extra on top of /trip/crafts-along-route - its own caller already treats
+    a failure as non-fatal and returns trip_summary: null. But at 30s, a slow
+    Gemini call was blocking the *entire* route response (including the actual
+    craft matches) for up to 30 extra seconds, which is what was tripping the
+    frontend's timeout and forcing it to fall back to mock data. Failing fast
+    here means the person always gets their crafts+route quickly, with the
+    trip_summary simply absent when Gemini is slow, instead of the whole
+    request stalling.
+    """
     if not GEMINI_API_KEY:
         raise ValueError("GEMINI_API_KEY is not set in .env")
 
@@ -30,7 +41,7 @@ def _call_gemini(prompt: str) -> str:
         ]
     }
 
-    response = requests.post(GEMINI_API_URL, params=params, json=body, headers=headers, timeout=30)
+    response = requests.post(GEMINI_API_URL, params=params, json=body, headers=headers, timeout=timeout)
     if not response.ok:
         # Log the real error body so failures are debuggable instead of a bare status code
         logger.error(f"Gemini API error {response.status_code}: {response.text}")

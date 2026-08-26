@@ -4,6 +4,7 @@ POST /trip/crafts-along-route -> given start + end coordinates, returns crafts n
 """
 
 import logging
+import time
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional
@@ -13,6 +14,33 @@ from app.services.ai_service import generate_trip_summary
 
 logger = logging.getLogger("kalatrail")
 router = APIRouter(prefix="/trip", tags=["trip"])
+
+# In-memory cache for full route responses, keyed by rounded start/end coords + buffer_km.
+# Repeated traces of the same corridor (demo rehearsal, judges re-running the same route,
+# a person retrying after a slow first attempt) previously re-did the full ORS route call +
+# craft match + Gemini summary every single time. Rounding to 2 decimal places (~1km) means
+# near-identical clicks on the same two cities still hit the cache.
+_ROUTE_CACHE_TTL_SECONDS = 3600
+_route_cache: dict = {}
+
+
+def _route_cache_key(req: "RouteRequest") -> tuple:
+    return (
+        round(req.start_lat, 2), round(req.start_lng, 2),
+        round(req.end_lat, 2), round(req.end_lng, 2),
+        req.buffer_km, req.include_summary,
+    )
+
+
+def _get_cached_route(key: tuple):
+    hit = _route_cache.get(key)
+    if hit and (time.time() - hit["at"]) < _ROUTE_CACHE_TTL_SECONDS:
+        return hit["response"]
+    return None
+
+
+def _set_cached_route(key: tuple, response: dict):
+    _route_cache[key] = {"at": time.time(), "response": response}
 
 
 class RouteRequest(BaseModel):
@@ -33,6 +61,11 @@ def crafts_along_route(req: RouteRequest):
     and returns all crafts from the DB that fall within buffer_km of that route,
     sorted nearest-first.
     """
+    cache_key = _route_cache_key(req)
+    cached_response = _get_cached_route(cache_key)
+    if cached_response is not None:
+        return cached_response
+
     # 1. Get the route from OpenRouteService
     try:
         route_points = get_route(req.start_lng, req.start_lat, req.end_lng, req.end_lat)
@@ -63,9 +96,11 @@ def crafts_along_route(req: RouteRequest):
             trip_summary = None
             logger.warning(f"AI summary generation failed (non-fatal): {e}")
 
-    return {
+    response = {
         "route_point_count": len(route_points),
         "crafts_found": len(matched_crafts),
         "crafts": matched_crafts,
         "trip_summary": trip_summary,
     }
+    _set_cached_route(cache_key, response)
+    return response
