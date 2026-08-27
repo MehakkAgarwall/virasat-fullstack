@@ -85,6 +85,39 @@ def crafts_along_route(req: RouteRequest):
     # 3. Filter to crafts near the route
     matched_crafts = find_crafts_near_route(route_points, all_crafts, buffer_km=req.buffer_km)
 
+    # 3b. Attach any real artisans (artisan_profiles) whose primaryCraftId matches a
+    #     matched craft, so the response links each craft to an actual person to visit -
+    #     not just a static description. Skipped entirely if no crafts matched.
+    if matched_crafts:
+        craft_ids = [c["id"] for c in matched_crafts if c.get("id") is not None]
+        conn = get_connection()
+        try:
+            cursor = conn.cursor(dictionary=True)
+            if craft_ids:
+                placeholders = ",".join(["%s"] * len(craft_ids))
+                cursor.execute(
+                    f"SELECT * FROM artisan_profiles WHERE primaryCraftId IN ({placeholders})",
+                    tuple(craft_ids),
+                )
+                artisan_rows = cursor.fetchall()
+            else:
+                artisan_rows = []
+            cursor.close()
+        except Exception as e:
+            # Never let a missing/broken artisan_profiles table break the core
+            # crafts-along-route response - artisans are an enrichment, not a dependency.
+            artisan_rows = []
+            logger.warning(f"Fetching artisans for matched crafts failed (non-fatal): {e}")
+        finally:
+            conn.close()
+
+        artisans_by_craft_id: dict = {}
+        for artisan in artisan_rows:
+            artisans_by_craft_id.setdefault(artisan["primaryCraftId"], []).append(artisan)
+
+        for craft in matched_crafts:
+            craft["artisans"] = artisans_by_craft_id.get(craft.get("id"), [])
+
     # 4. Optionally generate an AI trip summary (skipped if no crafts matched, or if the
     #    person set include_summary=false, or if the AI call fails - never let a summary
     #    failure break the whole response, since crafts_along_route is the core feature)

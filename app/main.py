@@ -9,7 +9,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.services.db_service import get_connection
-from app.routes import craft_routes, trip_routes
+from app.routes import craft_routes, trip_routes, artisan_routes
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("kalatrail")
@@ -72,10 +72,15 @@ def root():
             "GET /health-db",
             "GET /crafts",
             "GET /crafts/{region}",
+            "GET /artisans",
+            "GET /artisans/key/{artisan_key}",
+            "GET /artisans/craft/{craft_id}",
+            "GET /artisans/{region}",
             "POST /trip/crafts-along-route",
         ],
     }
 
 
 app.include_router(craft_routes.router)
+app.include_router(artisan_routes.router)
 app.include_router(trip_routes.router)
