@@ -1,6 +1,6 @@
 import { COOKIE_NAME } from "@shared/const";
 import { z } from "zod";
-import { createBooking, createManagedExperience, createManagedProduct, createProductEnquiry, createTravellerReflection, deleteManagedProduct, getArtisanProfile, getCulturalResource, getOrCreateArtisanProfile, getOrCreateTravellerProfile, getPublishedExperience, getPublishedProduct, getTravellerProfile, listAuthorityPlannedRoutes, listBookingsForArtisan, listBookingsForTraveller, listCulturalResources, listDemoStates, listExperiencesForArtisan, listProductEnquiriesForArtisan, listProductsForArtisan, listPublishedExperiences, listPublishedProductsForArtisan, listPublishedProductsForCraft, listSharedTravellerReflections, listTravellerReflections, publishTravellerReflection, removeBookingForTraveller, respondToProductEnquiry, saveDemoState, updateArtisanProfile, updateBookingStatus, updateManagedExperience, updateManagedProduct, updateTravellerProfile } from "./db";
+import { createBooking, createManagedExperience, createManagedProduct, createProductEnquiry, createTravellerReflection, deleteManagedProduct, getArtisanProfile, getCulturalResource, getOrCreateArtisanProfile, getOrCreateTravellerProfile, getPublishedExperience, getPublishedProduct, getTravellerProfile, listAllArtisanProfiles, listAuthorityPlannedRoutes, listBookingsForArtisan, listBookingsForTraveller, listCulturalResources, listDemoStates, listExperiencesForArtisan, listProductEnquiriesForArtisan, listProductsForArtisan, listPublishedExperiences, listPublishedProductsForArtisan, listPublishedProductsForCraft, listSharedTravellerReflections, listTravellerReflections, publishTravellerReflection, removeBookingForTraveller, respondToProductEnquiry, saveDemoState, updateArtisanProfile, updateBookingStatus, updateManagedExperience, updateManagedProduct, updateTravellerProfile } from "./db";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
@@ -108,6 +108,7 @@ export const appRouter = router({
     respond: publicProcedure.input(z.object({ enquiryId: z.string().min(8).max(64), artisanKey: z.string().min(8).max(191) })).mutation(({ input }) => respondToProductEnquiry(input)),
   }),
   artisanProfile: router({
+    listAll: publicProcedure.query(() => listAllArtisanProfiles()),
     get: publicProcedure
       .input(z.object({ artisanKey: z.string().min(8).max(191) }))
       .query(({ input }) => getArtisanProfile(input.artisanKey)),

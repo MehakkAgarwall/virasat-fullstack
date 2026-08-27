@@ -15,6 +15,7 @@ import Artisan from "./pages/Artisan";
 import Authority from "./pages/Authority";
 import CraftDetail from "./pages/CraftDetail";
 import ArtisanProfile from "./pages/ArtisanProfile";
+import ArtisanDirectory from "./pages/ArtisanDirectory";
 import ProductDetail from "./pages/ProductDetail";
 import ExperienceDetail from "./pages/ExperienceDetail";
 import CulturalResourceDetail from "./pages/CulturalResourceDetail";
@@ -46,6 +47,7 @@ function Router() {
     <Route path="/explore">{() => <Traveller><Explore /></Traveller>}</Route>
     <Route path="/notes">{() => <Traveller><HeritageNotes /></Traveller>}</Route>
     <Route path="/planner">{() => <Traveller><Planner /></Traveller>}</Route>
+    <Route path="/artisans">{() => <Traveller><ArtisanDirectory /></Traveller>}</Route>
     <Route path="/artisan">{() => <ArtisanGate><Artisan /></ArtisanGate>}</Route>
     <Route path="/authority">{() => <AuthorityGate><Authority /></AuthorityGate>}</Route>
     <Route path="/craft/:id">{() => <Traveller><CraftDetail /></Traveller>}</Route>
