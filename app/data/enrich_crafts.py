@@ -1,50 +1,74 @@
 """
-One-time enrichment script: generates a friendly AI description for every craft
-that doesn't already have one, and saves it into the `ai_description` column.
+Robust craft-enrichment script with smart rate-limit handling.
+
+Key improvements over a naive retry loop:
+- Reads the actual `retryDelay` Gemini returns in its 429 error body and waits
+  exactly that long, instead of guessing or retrying too fast.
+- If Gemini reports a DAILY quota exhausted (not just per-minute), stops the
+  whole run cleanly instead of burning remaining attempts on every craft.
+- Safe to re-run any time - only processes crafts still missing ai_description,
+  so a partial run today + finishing tomorrow works with zero duplicate effort.
 
 Run from the project root with:
     python -m app.data.enrich_crafts
-
-Safe to re-run - it skips crafts that already have an ai_description,
-so you won't burn API calls regenerating what's already cached.
 """
 
 import os
 import sys
 import time
+import json
+import re
+import requests
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from app.services.db_service import get_connection  # noqa: E402
 from app.services.ai_service import generate_craft_description  # noqa: E402
 
-MAX_RETRIES = 3
-RETRY_DELAY = 20  # seconds, on top of the normal 13s pacing
+MAX_RETRIES_PER_CRAFT = 3
+
+
+def _extract_retry_delay_seconds(error_text: str) -> float:
+    """
+    Parses Gemini's 429 error body for the real retryDelay it tells us to wait,
+    e.g. {"retryDelay": "37s"}. Falls back to 15s if we can't find one.
+    """
+    match = re.search(r'"retryDelay":\s*"(\d+)s"', error_text)
+    if match:
+        return float(match.group(1)) + 1  # small buffer
+    return 15.0
+
+
+def _is_daily_quota_exhausted(error_text: str) -> bool:
+    """Detects the specific 'per day' quota message vs a per-minute throttle."""
+    return "PerDay" in error_text or "per day" in error_text.lower()
 
 
 def enrich():
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-
     cursor.execute("SELECT * FROM crafts WHERE ai_description IS NULL")
-    crafts_to_enrich = cursor.fetchall()
+    crafts = cursor.fetchall()
+    cursor.close()
 
-    if not crafts_to_enrich:
+    if not crafts:
         print("All crafts already have AI descriptions. Nothing to do.")
-        cursor.close()
         conn.close()
         return
 
-    print(f"Found {len(crafts_to_enrich)} crafts without AI descriptions. Generating...")
-
+    print(f"Found {len(crafts)} crafts without AI descriptions. Enriching...")
     update_cursor = conn.cursor()
-    success_count = 0
+    success = 0
+    skipped_daily_limit = False
 
-    for craft in crafts_to_enrich:
-        ai_desc = None
-        last_error = None
+    for i, craft in enumerate(crafts, start=1):
+        if skipped_daily_limit:
+            print(f"  SKIP '{craft['name']}' - daily quota already exhausted this run")
+            continue
 
-        for attempt in range(1, MAX_RETRIES + 1):
+        attempt = 0
+        while attempt < MAX_RETRIES_PER_CRAFT:
+            attempt += 1
             try:
                 ai_desc = generate_craft_description(
                     name=craft["name"],
@@ -53,32 +77,47 @@ def enrich():
                     district=craft["district"],
                     raw_description=craft["description"],
                 )
-                break  # success, stop retrying
+                update_cursor.execute(
+                    "UPDATE crafts SET ai_description = %s WHERE id = %s",
+                    (ai_desc, craft["id"]),
+                )
+                conn.commit()
+                success += 1
+                print(f"  [{i}/{len(crafts)}] {craft['name']} - done")
+                break
+
+            except requests.exceptions.HTTPError as e:
+                error_text = e.response.text if e.response is not None else str(e)
+
+                if _is_daily_quota_exhausted(error_text):
+                    print(f"  DAILY QUOTA EXHAUSTED at '{craft['name']}'. "
+                          f"Stopping enrichment for today - re-run this script tomorrow "
+                          f"to continue exactly where it left off.")
+                    skipped_daily_limit = True
+                    break
+
+                wait = _extract_retry_delay_seconds(error_text)
+                print(f"    attempt {attempt}/{MAX_RETRIES_PER_CRAFT} rate-limited for "
+                      f"'{craft['name']}' - waiting {wait:.0f}s (Gemini's own retry delay)")
+                time.sleep(wait)
+
             except Exception as e:
-                last_error = e
-                print(f"  attempt {attempt}/{MAX_RETRIES} failed for {craft['name']}: {type(e).__name__}: {e}")
-                if attempt < MAX_RETRIES:
-                    time.sleep(RETRY_DELAY)
+                print(f"    attempt {attempt}/{MAX_RETRIES_PER_CRAFT} failed for "
+                      f"'{craft['name']}': {e}")
+                time.sleep(3)
 
-        if ai_desc is not None:
-            update_cursor.execute(
-                "UPDATE crafts SET ai_description = %s WHERE id = %s",
-                (ai_desc, craft["id"]),
-            )
-            conn.commit()
-            success_count += 1
-            print(f"  [{success_count}/{len(crafts_to_enrich)}] {craft['name']} - done")
         else:
-            print(f"  GAVE UP on {craft['name']} after {MAX_RETRIES} attempts: {last_error}")
+            print(f"  GAVE UP on '{craft['name']}' after {MAX_RETRIES_PER_CRAFT} attempts")
 
-        # Free tier allows 5 requests/minute - wait between calls to stay under that limit
-        time.sleep(13)
+        time.sleep(1.5)  # gentle pacing between crafts even on success
 
     update_cursor.close()
-    cursor.close()
     conn.close()
 
-    print(f"Enriched {success_count}/{len(crafts_to_enrich)} crafts.")
+    print(f"\nDone this run. {success}/{len(crafts)} crafts enriched.")
+    if skipped_daily_limit:
+        print("Daily quota was hit - simply re-run this same command tomorrow to pick up "
+              "the rest. Nothing needs to change; already-enriched crafts are skipped automatically.")
 
 
 if __name__ == "__main__":
