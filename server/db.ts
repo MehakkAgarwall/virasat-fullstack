@@ -286,6 +286,25 @@ export async function getArtisanProfile(artisanKey: string) {
   return rows[0] ?? null;
 }
 
+export async function listAllArtisanProfiles() {
+  const db = await getDb();
+  if (!db) throw new Error("Persistent storage is temporarily unavailable.");
+  const rows = await db.select().from(artisanProfiles).orderBy(artisanProfiles.personalName);
+  return rows.map((row) => ({
+    id: row.id,
+    artisanKey: row.artisanKey,
+    personalName: row.personalName,
+    studioName: row.studioName,
+    craftSpecialization: row.craftSpecialization,
+    state: row.state,
+    location: row.location,
+    coverPhotoUrl: row.coverPhotoUrl,
+    profilePhotoUrl: row.profilePhotoUrl,
+    yearsOfPractice: row.yearsOfPractice,
+    bio: row.bio.length > 150 ? row.bio.slice(0, 147) + "…" : row.bio,
+  }));
+}
+
 export async function getOrCreateArtisanProfile(input: { artisanKey: string; personalName: string }) {
   const existing = await getArtisanProfile(input.artisanKey);
   if (existing) return existing;

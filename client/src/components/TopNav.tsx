@@ -11,6 +11,7 @@ let lastPublicRoute = "";
 const routeLabels: Record<string, string> = {
   "/": "Virāsat",
   "/explore": "Explore",
+  "/artisans": "Artisan Directory",
   "/notes": "Heritage Notes",
   "/planner": "Cultural Trail",
   "/atlas": "Craft Atlas",
@@ -56,6 +57,7 @@ export function TopNav({ dark = false }: { dark?: boolean }) {
         <nav className="hidden items-center gap-7 md:flex" aria-label="Primary navigation">
           {isTraveller ? travellerPrimaryNavigation.map((item) => { const Icon = item.icon; return <Link key={item.href} href={item.href} className={`nav-link ${item.match(location) ? "nav-link-active" : linkClass}`} aria-current={item.match(location) ? "page" : undefined}><Icon size={15} />{item.label}</Link>; }) : <>
             <Link href="/explore" className={`nav-link ${location === "/explore" ? "nav-link-active" : linkClass}`}><Compass size={15} />Explore</Link>
+            <Link href="/artisans" className={`nav-link ${location === "/artisans" || location.startsWith("/maker/") ? "nav-link-active" : linkClass}`}><UserRound size={15} />Artisans</Link>
             <Link href="/atlas" className={`nav-link ${location === "/atlas" ? "nav-link-active" : linkClass}`}><MapPinned size={15} />Craft Atlas</Link>
             <Link href="/planner" className={`nav-link ${location === "/planner" ? "nav-link-active" : linkClass}`}><Route size={15} />Cultural Trail</Link>
             <Link href="/notes" className={`nav-link ${location === "/notes" ? "nav-link-active" : linkClass}`}><BookOpen size={15} />Journal</Link>
