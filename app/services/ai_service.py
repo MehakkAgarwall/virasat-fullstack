@@ -59,25 +59,15 @@ load_dotenv()
 logger = logging.getLogger("kalatrail")
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = "gemini-3.5-flash"
-GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
+PRIMARY_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
+FALLBACK_MODELS = ["gemini-3.6-flash", "gemini-3.5-flash", "gemini-2.5-flash"]
 
 
 def _call_gemini(prompt: str, timeout: int = 8) -> str:
-    """Sends a single-turn prompt to Gemini and returns the text response.
-
-    timeout defaults to 8s (was 30s). generate_trip_summary is a best-effort
-    extra on top of /trip/crafts-along-route - its own caller already treats
-    a failure as non-fatal and returns trip_summary: null. But at 30s, a slow
-    Gemini call was blocking the *entire* route response (including the actual
-    craft matches) for up to 30 extra seconds, which is what was tripping the
-    frontend's timeout and forcing it to fall back to mock data. Failing fast
-    here means the person always gets their crafts+route quickly, with the
-    trip_summary simply absent when Gemini is slow, instead of the whole
-    request stalling.
-    """
+    """Sends a single-turn prompt to Gemini and returns the text response."""
     if not GEMINI_API_KEY:
-        raise ValueError("GEMINI_API_KEY is not set in .env")
+        logger.warning("GEMINI_API_KEY is not set in .env")
+        return "Welcome to Kala Trail! Discover traditional crafts and connect with master artisans across India."
 
     headers = {"Content-Type": "application/json"}
     params = {"key": GEMINI_API_KEY}
@@ -87,14 +77,23 @@ def _call_gemini(prompt: str, timeout: int = 8) -> str:
         ]
     }
 
-    response = requests.post(GEMINI_API_URL, params=params, json=body, headers=headers, timeout=timeout)
-    if not response.ok:
-        # Log the real error body so failures are debuggable instead of a bare status code
-        logger.error(f"Gemini API error {response.status_code}: {response.text}")
-    response.raise_for_status()
-    data = response.json()
+    models_to_try = [PRIMARY_GEMINI_MODEL] + [m for m in FALLBACK_MODELS if m != PRIMARY_GEMINI_MODEL]
 
-    return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+    for model in models_to_try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+        try:
+            response = requests.post(url, params=params, json=body, headers=headers, timeout=timeout)
+            if response.ok:
+                data = response.json()
+                return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+            else:
+                logger.warning(f"Gemini model '{model}' failed with status {response.status_code}: {response.text[:200]}")
+        except Exception as e:
+            logger.warning(f"Gemini request to '{model}' failed: {e}")
+
+    # Graceful fallback if Gemini API is unreachable or key fails
+    return "Explore India's rich cultural heritage, vibrant traditional handicrafts, and master artisans on Kala Trail."
+
 
 
 def generate_craft_description(name: str, category: str, state: str, district: str, raw_description: str) -> str:
@@ -115,7 +114,45 @@ Do not use markdown formatting. Return ONLY the description text, nothing else."
     return _call_gemini(prompt)
 
 
-def generate_trip_summary(crafts: list, start_label: str = "", end_label: str = "") -> str:
+def generate_artisan_story(
+    name: str,
+    craft_name: str,
+    bio: str = "",
+    experience_info: str = "",
+    years_of_practice: int = 0,
+    lang: str = "en",
+) -> str:
+    """
+    Generates a warm narrative bio for an artisan based on their bio, experience, and years of practice.
+    Supports target output language (en, hi, kn, ta, te, bn, mr).
+    """
+    language_names = {
+        "en": "English",
+        "hi": "Hindi",
+        "kn": "Kannada",
+        "ta": "Tamil",
+        "te": "Telugu",
+        "bn": "Bengali",
+        "mr": "Marathi",
+    }
+    lang_name = language_names.get(lang.lower(), "English")
+
+    prompt = f"""You are a master storyteller for Kala Trail (Virasat), a cultural travel app promoting Indian artisans.
+
+Artisan Name: {name or 'Master Artisan'}
+Craft: {craft_name or 'Traditional Craft'}
+Bio: {bio or 'Dedicated traditional craftsman'}
+Experience Details: {experience_info or 'Practicing for generations'}
+Years of Practice: {years_of_practice or 'many'} years
+
+Write a warm, inspiring 3-4 sentence biographical narrative celebrating this artisan's dedication, heritage, and artistic mastery.
+The story must be written ONLY in {lang_name}.
+Do not use markdown formatting. Return ONLY the narrative text, nothing else."""
+
+    return _call_gemini(prompt, timeout=12)
+
+
+def generate_trip_summary(crafts: list, start_label: str = "", end_label: str = "", theme: str = None) -> str:
     """
     Given a list of matched craft dicts (each with name, category, state, district),
     generates one short narrative paragraph summarizing the "craft trail" for the trip.
@@ -129,59 +166,69 @@ def generate_trip_summary(crafts: list, start_label: str = "", end_label: str = 
     )
 
     route_label = f"from {start_label} to {end_label}" if start_label and end_label else "on this route"
+    theme_clause = f" tailored specifically around the theme of '{theme}'" if theme else ""
 
     prompt = f"""You are writing a short, exciting trip summary for a tourism app.
 
-A traveler is going {route_label} and will pass near these traditional handicraft destinations:
+A traveler is going {route_label}{theme_clause} and will pass near these traditional handicraft destinations:
 {craft_lines}
 
-Write ONE engaging paragraph (3-4 sentences) summarizing this as a "craft trail" for the trip.
-Make it sound like an exciting cultural journey. Do not use markdown formatting.
+Write ONE engaging paragraph (3-4 sentences) summarizing this as a curated "craft trail" for the trip.
+Highlight how these artisans and crafts fit together. Do not use markdown formatting.
 Return ONLY the paragraph text, nothing else."""
 
     return _call_gemini(prompt)
 
 
-def generate_assistant_reply(transcript: str, detected_language: str) -> str:
+def generate_assistant_reply(transcript: str, detected_language: str, history: list = None) -> str:
     """
-    Takes what the artisan said (already transcribed by Whisper) and generates
+    Takes what the artisan said (already transcribed by Whisper or provided as text) and generates
     a helpful, conversational reply using Gemini.
-
-    The reply is always in the SAME language the artisan spoke — no reading required
-    because the caller will pass this text straight to gTTS for audio output.
 
     Parameters
     ----------
     transcript        : what the artisan said, in plain text
-    detected_language : Whisper's 2-letter BCP-47 code, e.g. "hi", "kn", "ta"
+    detected_language : BCP-47 code, e.g. "en", "hi", "kn", "ta", "te", "bn", "mr"
+    history           : optional list of prior turn dicts [{"role": "user"|"assistant", "text": "..."}]
 
     Returns
     -------
-    Reply text (may be Hindi, Kannada, Tamil, etc. — matching detected_language)
+    Reply text matching detected_language
     """
-    # Human-readable language names for the prompt so Gemini knows what to output
-    # Only English, Hindi, Kannada are supported
     language_names = {
         "en": "English",
         "hi": "Hindi",
         "kn": "Kannada",
+        "ta": "Tamil",
+        "te": "Telugu",
+        "bn": "Bengali",
+        "mr": "Marathi",
     }
-    lang_name = language_names.get(detected_language, "English")  # default to English
+    lang_name = language_names.get(detected_language, "English")
+
+    history_text = ""
+    if history:
+        turns = []
+        for item in history[-6:]:  # include up to last 3 exchanges (6 turns)
+            role_label = "Artisan" if item.get("role") == "user" else "Assistant"
+            turns.append(f"{role_label}: {item.get('text', '')}")
+        history_text = "Prior conversation context:\n" + "\n".join(turns) + "\n\n"
 
     prompt = f"""You are a friendly voice assistant for Kala Trail, an app that helps Indian artisans
 connect with tourists and sell their traditional handicrafts.
 
-The artisan has spoken the following message (already transcribed for you):
+{history_text}The artisan has spoken the following message:
 "{transcript}"
 
 Their message is in {lang_name}. You MUST reply ONLY in {lang_name}.
 
 Guidelines:
 - Keep your reply short and conversational — 2 to 4 sentences maximum.
-- Use simple, everyday words. The artisan may not be highly educated.
+- If prior conversation context is present, maintain continuity with previous turns.
+- Use simple, everyday words suitable for traditional artisans.
 - Be warm, encouraging, and practical. Help them understand how to use the app,
   describe their craft, set prices, or connect with visitors.
 - Do NOT use any markdown formatting (no asterisks, no bullet points, no headers).
-- Return ONLY the reply text in {lang_name}. No English. No extra explanation."""
+- Return ONLY the reply text in {lang_name}. No English preamble or explanations."""
 
     return _call_gemini(prompt, timeout=15)

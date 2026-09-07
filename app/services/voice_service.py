@@ -91,11 +91,14 @@ def synthesise_speech(text: str, language: str = "hi") -> bytes:
     except ImportError:
         raise RuntimeError("gTTS is not installed. Add 'gTTS' to requirements.txt.")
 
-    # Only English, Hindi, Kannada are supported
     lang_map = {
         "en": "en",   # English
         "hi": "hi",   # Hindi
         "kn": "kn",   # Kannada
+        "ta": "ta",   # Tamil
+        "te": "te",   # Telugu
+        "bn": "bn",   # Bengali
+        "mr": "mr",   # Marathi
     }
     gtts_lang = lang_map.get(language, "en")  # default to English if anything else detected
 

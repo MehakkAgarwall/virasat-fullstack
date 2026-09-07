@@ -19,11 +19,12 @@ ORS_DIRECTIONS_URL = "https://api.openrouteservice.org/v2/directions/driving-car
 DEFAULT_BUFFER_KM = 50
 
 
-def get_route(start_lng: float, start_lat: float, end_lng: float, end_lat: float):
+def get_route(start_lng: float = None, start_lat: float = None, end_lng: float = None, end_lat: float = None, coordinates_list: list = None):
     """
     Calls OpenRouteService Directions API (geojson variant).
     Note: ORS expects coordinates as [longitude, latitude] - NOT lat/lng order.
     Returns a list of [lng, lat] points describing the route path.
+    Can take start/end coordinates OR an explicit list of [lng, lat] waypoint coordinates.
     """
     if not ORS_API_KEY:
         raise ValueError("ORS_API_KEY is not set in .env")
@@ -32,12 +33,18 @@ def get_route(start_lng: float, start_lat: float, end_lng: float, end_lat: float
         "Authorization": ORS_API_KEY,
         "Content-Type": "application/json",
     }
-    body = {
-        "coordinates": [
+    
+    if coordinates_list and len(coordinates_list) >= 2:
+        coords = coordinates_list
+    elif start_lng is not None and start_lat is not None and end_lng is not None and end_lat is not None:
+        coords = [
             [start_lng, start_lat],
             [end_lng, end_lat],
         ]
-    }
+    else:
+        raise ValueError("Invalid routing parameters provided.")
+
+    body = {"coordinates": coords}
 
     response = requests.post(ORS_DIRECTIONS_URL, json=body, headers=headers, timeout=15)
     response.raise_for_status()

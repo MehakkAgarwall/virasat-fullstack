@@ -50,3 +50,32 @@ def get_connection():
     except Error as e:
         logger.error(f"Failed to get MySQL connection from pool: {e}")
         raise
+
+
+def init_db():
+    """
+    Ensures required database tables like artisan_interests exist.
+    """
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        create_table_sql = """
+        CREATE TABLE IF NOT EXISTS artisan_interests (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            artisan_key VARCHAR(100) NOT NULL,
+            visitor_name VARCHAR(150) NOT NULL,
+            visitor_email VARCHAR(150) NOT NULL,
+            visitor_phone VARCHAR(30),
+            message TEXT,
+            preferred_date DATE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_artisan_key (artisan_key)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        """
+        cursor.execute(create_table_sql)
+        conn.commit()
+        cursor.close()
+        conn.close()
+        logger.info("Database initialization completed successfully.")
+    except Exception as e:
+        logger.warning(f"init_db non-fatal warning: {e}")

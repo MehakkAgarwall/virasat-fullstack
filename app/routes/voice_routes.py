@@ -18,9 +18,11 @@ Flow:
 
 import base64
 import logging
-
-from fastapi import APIRouter, File, UploadFile, HTTPException
+import uuid
+from typing import Optional, List
+from fastapi import APIRouter, File, UploadFile, Form, HTTPException
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 
 from app.services.voice_service import transcribe_audio, synthesise_speech
 from app.services.ai_service import generate_assistant_reply
@@ -28,29 +30,49 @@ from app.services.ai_service import generate_assistant_reply
 router = APIRouter(prefix="/voice", tags=["voice"])
 logger = logging.getLogger("kalatrail")
 
+# Simple in-memory session store mapping session_id -> list of turn dicts
+_voice_sessions: dict = {}
+
+
+class TextChatRequest(BaseModel):
+    text: str
+    language: Optional[str] = "en"
+    session_id: Optional[str] = None
+    generate_audio: Optional[bool] = True
+
+
+def _get_or_create_session_id(session_id: Optional[str]) -> str:
+    if not session_id or session_id.strip() == "":
+        return str(uuid.uuid4())
+    return session_id.strip()
+
+
+def _append_to_session(session_id: str, user_text: str, assistant_text: str):
+    if session_id not in _voice_sessions:
+        _voice_sessions[session_id] = []
+    _voice_sessions[session_id].append({"role": "user", "text": user_text})
+    _voice_sessions[session_id].append({"role": "assistant", "text": assistant_text})
+    # Keep last 10 turns max
+    if len(_voice_sessions[session_id]) > 20:
+        _voice_sessions[session_id] = _voice_sessions[session_id][-20:]
+
 
 @router.post("/chat")
-async def voice_chat(audio: UploadFile = File(...)):
+async def voice_chat(
+    audio: UploadFile = File(...),
+    session_id: Optional[str] = Form(None),
+):
     """
-    Accepts an audio file recorded in the browser (webm/mp4/wav/ogg).
-    Returns JSON with transcript, Gemini reply text, detected language,
-    and a base64-encoded MP3 of the spoken reply.
+    Accepts an audio file recorded in the browser (webm/mp4/wav/ogg) and optional session_id for multi-turn history.
+    Returns JSON with session_id, transcript, Gemini reply text, detected language, and base64 MP3.
+    """
+    session_id = _get_or_create_session_id(session_id)
+    history = _voice_sessions.get(session_id, [])
 
-    Example frontend usage:
-        const form = new FormData();
-        form.append("audio", blob, "recording.webm");
-        const res = await fetch("/voice/chat", { method: "POST", body: form });
-        const data = await res.json();
-        // Play audio:
-        const audio = new Audio("data:audio/mp3;base64," + data.audio_base64);
-        audio.play();
-    """
-    # ── 1. Read uploaded bytes ──────────────────────────────────────────────
     audio_bytes = await audio.read()
     if not audio_bytes:
         raise HTTPException(status_code=400, detail="Empty audio file received.")
 
-    # Guess extension from content-type or filename for the temp file suffix
     content_type = audio.content_type or ""
     if "webm" in content_type or (audio.filename or "").endswith(".webm"):
         ext = "webm"
@@ -61,9 +83,8 @@ async def voice_chat(audio: UploadFile = File(...)):
     elif "wav" in content_type or (audio.filename or "").endswith(".wav"):
         ext = "wav"
     else:
-        ext = "webm"  # MediaRecorder default in Chrome/Firefox
+        ext = "webm"
 
-    # ── 2. Speech-to-Text ───────────────────────────────────────────────────
     try:
         stt_result = transcribe_audio(audio_bytes, file_extension=ext)
         transcript = stt_result["text"]
@@ -78,28 +99,64 @@ async def voice_chat(audio: UploadFile = File(...)):
             detail="Could not understand the audio. Please speak clearly and try again."
         )
 
-    # ── 3. Generate Gemini reply ─────────────────────────────────────────────
     try:
-        reply_text = generate_assistant_reply(transcript, language)
+        reply_text = generate_assistant_reply(transcript, language, history=history)
+        _append_to_session(session_id, transcript, reply_text)
     except Exception as e:
         logger.exception("Gemini reply generation failed")
         raise HTTPException(status_code=500, detail=f"AI reply failed: {str(e)}")
 
-    # ── 4. Text-to-Speech ───────────────────────────────────────────────────
     try:
         mp3_bytes = synthesise_speech(reply_text, language=language)
         audio_b64 = base64.b64encode(mp3_bytes).decode("utf-8")
     except Exception as e:
         logger.exception("TTS failed")
-        # Still return text even if audio synthesis breaks — degraded but not dead
         audio_b64 = ""
-        logger.warning("TTS failed, returning text-only response.")
 
-    # ── 5. Return everything as JSON ─────────────────────────────────────────
     return JSONResponse(content={
+        "session_id": session_id,
         "transcript": transcript,
         "reply_text": reply_text,
         "language": language,
-        "audio_base64": audio_b64,          # play with: new Audio("data:audio/mp3;base64," + audio_base64)
+        "audio_base64": audio_b64,
         "audio_mime": "audio/mp3",
     })
+
+
+@router.post("/chat/text")
+def text_chat(req: TextChatRequest):
+    """
+    Text-based fallback endpoint for users/judges without a microphone.
+    Supports multi-turn context via session_id and optional TTS audio generation.
+    """
+    if not req.text or not req.text.strip():
+        raise HTTPException(status_code=400, detail="Text query cannot be empty.")
+
+    session_id = _get_or_create_session_id(req.session_id)
+    history = _voice_sessions.get(session_id, [])
+    language = req.language or "en"
+
+    try:
+        reply_text = generate_assistant_reply(req.text, language, history=history)
+        _append_to_session(session_id, req.text, reply_text)
+    except Exception as e:
+        logger.exception("Gemini reply generation failed")
+        raise HTTPException(status_code=500, detail=f"AI reply failed: {str(e)}")
+
+    audio_b64 = ""
+    if req.generate_audio:
+        try:
+            mp3_bytes = synthesise_speech(reply_text, language=language)
+            audio_b64 = base64.b64encode(mp3_bytes).decode("utf-8")
+        except Exception as e:
+            logger.warning(f"TTS generation failed for text chat (non-fatal): {e}")
+
+    return JSONResponse(content={
+        "session_id": session_id,
+        "query": req.text,
+        "reply_text": reply_text,
+        "language": language,
+        "audio_base64": audio_b64,
+        "audio_mime": "audio/mp3",
+    })
+

@@ -5,21 +5,27 @@ Run with: uvicorn app.main:app --reload --port 8000
 
 import os
 import logging
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from app.services.db_service import get_connection
-from app.routes import craft_routes, trip_routes, artisan_routes, voice_routes, i18n_routes
+from app.services.db_service import get_connection, init_db
+from app.routes import craft_routes, trip_routes, artisan_routes, voice_routes, i18n_routes, analytics_routes
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("kalatrail")
 
-app = FastAPI(title="Kala Trail API", version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Initialize DB tables on startup
+    init_db()
+    yield
+
+
+app = FastAPI(title="Kala Trail API", version="0.2.0", lifespan=lifespan)
 
 # CORS: reads a comma-separated list from ALLOWED_ORIGINS in .env if set
-# (e.g. "https://myfrontend.vercel.app,http://localhost:3000").
-# Falls back to "*" for local/hackathon dev if not set - tighten this once
-# your frontend's deployed URL is known.
 allowed_origins_env = os.getenv("ALLOWED_ORIGINS")
 allowed_origins = allowed_origins_env.split(",") if allowed_origins_env else ["*"]
 
@@ -71,12 +77,22 @@ def root():
             "GET /health",
             "GET /health-db",
             "GET /crafts",
+            "GET /crafts/search",
+            "GET /crafts/featured",
+            "GET /crafts/id/{craft_id}",
             "GET /crafts/{region}",
             "GET /artisans",
             "GET /artisans/key/{artisan_key}",
+            "GET /artisans/key/{artisan_key}/story",
+            "POST /artisans/{artisan_key}/interest",
+            "GET /artisans/{artisan_key}/interests",
             "GET /artisans/craft/{craft_id}",
             "GET /artisans/{region}",
             "POST /trip/crafts-along-route",
+            "POST /voice/chat",
+            "POST /voice/chat/text",
+            "GET /i18n/{lang}",
+            "GET /analytics/craft-coverage",
         ],
     }
 
@@ -86,3 +102,4 @@ app.include_router(artisan_routes.router)
 app.include_router(trip_routes.router)
 app.include_router(voice_routes.router)
 app.include_router(i18n_routes.router)
+app.include_router(analytics_routes.router)
