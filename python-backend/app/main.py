@@ -89,6 +89,7 @@ def root():
             "GET /artisans/craft/{craft_id}",
             "GET /artisans/{region}",
             "POST /trip/crafts-along-route",
+            "POST /trip/max-artisans-route",
             "POST /voice/chat",
             "POST /voice/chat/text",
             "GET /i18n/{lang}",

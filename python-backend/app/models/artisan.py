@@ -26,6 +26,8 @@ class Artisan(BaseModel):
     publicContact: str = ""
     languages: str = ""
     experienceInfo: str
+    lat: Optional[float] = None
+    lng: Optional[float] = None
     createdAt: Optional[datetime] = None
     updatedAt: Optional[datetime] = None
 

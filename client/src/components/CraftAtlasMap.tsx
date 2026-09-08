@@ -1,7 +1,9 @@
 import { Compass, MapPinned, RotateCcw } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import L from "leaflet";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 import type { AtlasCraft } from "../services/craftService";
-import { MapView } from "./Map";
 
 type AtlasMapProps = {
   crafts: AtlasCraft[];
@@ -11,18 +13,7 @@ type AtlasMapProps = {
 
 type Cluster = { crafts: AtlasCraft[]; coordinates: [number, number] };
 
-const INDIA_CENTER = { lat: 22.8, lng: 79.2 };
-
-const atlasMapStyle: google.maps.MapTypeStyle[] = [
-  { elementType: "geometry", stylers: [{ color: "#0b2c25" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#e8d6a3" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#082019" }, { weight: 3 }] },
-  { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#8c7845" }, { lightness: -18 }] },
-  { featureType: "landscape", elementType: "geometry", stylers: [{ color: "#103b31" }] },
-  { featureType: "poi", elementType: "geometry", stylers: [{ color: "#174539" }] },
-  { featureType: "road", elementType: "geometry", stylers: [{ color: "#3d5240" }, { lightness: -20 }] },
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#08251f" }] },
-];
+const INDIA_CENTER: [number, number] = [22.8, 79.2];
 
 function clusterCrafts(crafts: AtlasCraft[], zoom: number): Cluster[] {
   const cell = zoom <= 4 ? 4.25 : zoom <= 5 ? 2.25 : zoom <= 6 ? 1.1 : 0.28;
@@ -42,100 +33,126 @@ function clusterCrafts(crafts: AtlasCraft[], zoom: number): Cluster[] {
   }));
 }
 
-export function CraftAtlasMap({ crafts, selectedId, onSelect }: AtlasMapProps) {
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [failed, setFailed] = useState(false);
-  const [zoom, setZoom] = useState(4.6);
-  const overlays = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
-  const listeners = useRef<google.maps.MapsEventListener[]>([]);
+function craftMarkerIcon(isCluster: boolean, isSelected: boolean) {
+  const cls = isCluster
+    ? "craft-atlas-marker craft-atlas-marker-cluster"
+    : `craft-atlas-marker${isSelected ? " is-selected" : ""}`;
+  return L.divIcon({
+    className: "craft-atlas-marker-wrap",
+    html: `<span class="${cls}"></span>`,
+    iconSize: [18, 18],
+    iconAnchor: [9, 9],
+    popupAnchor: [0, -12],
+  });
+}
 
-  const onMapReady = useCallback((nextMap: google.maps.Map) => {
-    nextMap.setOptions({
-      styles: atlasMapStyle,
-      mapTypeControl: false,
-      streetViewControl: false,
-      fullscreenControl: true,
-      zoomControl: true,
-      gestureHandling: "greedy",
-      minZoom: 4,
-      restriction: {
-        latLngBounds: { north: 37.5, south: 5.5, west: 67, east: 98 },
-        strictBounds: false,
-      },
-    });
-    nextMap.setCenter(INDIA_CENTER);
-    nextMap.setZoom(5);
-    setMap(nextMap);
-  }, []);
+function clusterMarkerIcon(count: number) {
+  return L.divIcon({
+    className: "craft-atlas-marker-wrap",
+    html: `<span class="craft-atlas-marker craft-atlas-marker-cluster"><span>${count}</span></span>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+    popupAnchor: [0, -16],
+  });
+}
+
+function singleMarkerIcon(isSelected: boolean) {
+  return L.divIcon({
+    className: "craft-atlas-marker-wrap",
+    html: `<span class="craft-atlas-marker${isSelected ? " is-selected" : ""}"><i></i></span>`,
+    iconSize: [18, 18],
+    iconAnchor: [9, 9],
+    popupAnchor: [0, -12],
+  });
+}
+
+/** Renders clustered craft markers as Leaflet layers, re-clusters on zoom change */
+function AtlasMarkerLayer({ crafts, selectedId, onSelect }: AtlasMapProps) {
+  const map = useMap();
+  const layerGroupRef = useRef<L.LayerGroup>(L.layerGroup());
+  const [zoom, setZoom] = useState(map.getZoom());
+
+  useMapEvents({
+    zoomend: () => setZoom(map.getZoom()),
+  });
 
   useEffect(() => {
-    if (!map) return;
-    const listener = map.addListener("zoom_changed", () => setZoom(map.getZoom() ?? 4.6));
-    listeners.current.push(listener);
-    return () => {
-      listener.remove();
-      listeners.current = [];
-    };
-  }, [map]);
-
-  useEffect(() => {
-    if (!map) return;
-    overlays.current.forEach((marker) => { marker.map = null; });
-    overlays.current = [];
+    const lg = layerGroupRef.current;
+    lg.clearLayers();
 
     const clusters = clusterCrafts(crafts, zoom);
     clusters.forEach((cluster) => {
       const [lat, lng] = cluster.coordinates;
       const isCluster = cluster.crafts.length > 1;
       const craft = cluster.crafts[0];
-      const content = document.createElement("button");
-      content.type = "button";
-      content.className = isCluster
-        ? "craft-atlas-marker craft-atlas-marker-cluster"
-        : `craft-atlas-marker ${craft.id === selectedId ? "is-selected" : ""}`;
-      content.setAttribute("aria-label", isCluster ? `${cluster.crafts.length} craft records in this area` : `Open ${craft.name}`);
-      content.innerHTML = isCluster
-        ? `<span>${cluster.crafts.length}</span>`
-        : `<i></i><b>${craft.name}</b>`;
-      const marker = new google.maps.marker.AdvancedMarkerElement({
-        map,
-        position: { lat, lng },
-        content,
-        title: isCluster ? `${cluster.crafts.length} craft records` : craft.name,
-      });
-      marker.addListener("click", () => {
+
+      const icon = isCluster
+        ? clusterMarkerIcon(cluster.crafts.length)
+        : singleMarkerIcon(craft.id === selectedId);
+
+      const marker = L.marker([lat, lng], { icon, title: isCluster ? `${cluster.crafts.length} craft records` : craft.name });
+
+      marker.on("click", () => {
         if (isCluster) {
-          const bounds = new google.maps.LatLngBounds();
-          cluster.crafts.forEach((item) => {
-            const [nextLat, nextLng] = item.atlasCoordinates ?? [lat, lng];
-            bounds.extend({ lat: nextLat, lng: nextLng });
-          });
-          map.fitBounds(bounds, 84);
+          const bounds = L.latLngBounds(
+            cluster.crafts
+              .filter((item) => item.atlasCoordinates)
+              .map((item) => item.atlasCoordinates as [number, number])
+          );
+          map.fitBounds(bounds, { padding: [84, 84] });
           return;
         }
         onSelect(craft);
-        map.panTo({ lat, lng });
+        map.panTo([lat, lng]);
       });
-      overlays.current.push(marker);
+
+      if (!isCluster) {
+        marker.bindTooltip(craft.name, {
+          direction: "top",
+          offset: [0, -10],
+          className: "craft-atlas-tooltip",
+        });
+      }
+
+      lg.addLayer(marker);
     });
 
-    return () => {
-      overlays.current.forEach((marker) => { marker.map = null; });
-      overlays.current = [];
-    };
-  }, [crafts, map, onSelect, selectedId, zoom]);
+    lg.addTo(map);
+    return () => { lg.clearLayers(); };
+  }, [crafts, zoom, selectedId, onSelect, map]);
 
-  if (failed) {
-    return <div className="craft-atlas-map-fallback"><MapPinned size={18} /><b>Live map view is unavailable</b><p>The live craft record list and source-honest location status remain available below.</p></div>;
-  }
+  return null;
+}
+
+export function CraftAtlasMap({ crafts, selectedId, onSelect }: AtlasMapProps) {
+  const [ready, setReady] = useState(false);
 
   return <div className="craft-atlas-map-shell">
-    <MapView className="craft-atlas-google-map" initialCenter={INDIA_CENTER} initialZoom={4.6} onMapReady={onMapReady} onMapError={() => setFailed(true)} />
+    <MapContainer
+      center={INDIA_CENTER}
+      zoom={5}
+      minZoom={4}
+      maxZoom={14}
+      scrollWheelZoom={true}
+      zoomControl={true}
+      className="craft-atlas-leaflet-map"
+      style={{ width: "100%", height: "100%", position: "absolute", inset: 0, zIndex: 1 }}
+      whenReady={() => setReady(true)}
+      maxBounds={[[5.5, 67], [37.5, 98]]}
+      maxBoundsViscosity={0.8}
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        opacity={0.64}
+      />
+      <AtlasMarkerLayer crafts={crafts} selectedId={selectedId} onSelect={onSelect} />
+    </MapContainer>
     <svg className="craft-atlas-thread-network" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M4 79 C17 68 18 53 33 52 S49 67 60 48 S82 25 96 16" /><path d="M7 22 C20 31 28 22 40 30 S64 29 79 10" /></svg>
     <div className={`craft-atlas-selected-thread ${selectedId ? "is-active" : ""}`} aria-hidden="true" />
     <div className="craft-atlas-map-grid" aria-hidden="true" />
     <div className="craft-atlas-compass" aria-hidden="true"><Compass size={19} /><span>INDIA / CRAFT ATLAS</span></div>
     <div className="craft-atlas-map-legend" aria-hidden="true"><b>Craft Atlas</b><span><i />Craft location</span><span><i />Craft cluster</span><span><i />Selected craft</span></div>
-    {!map && <div className="craft-atlas-map-loading"><RotateCcw size={17} /><span>Tracing live craft locations</span></div>}
+    {!ready && <div className="craft-atlas-map-loading"><RotateCcw size={17} /><span>Tracing live craft locations</span></div>}
   </div>;
 }

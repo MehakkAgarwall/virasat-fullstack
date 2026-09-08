@@ -37,6 +37,8 @@ export default function Artisan() {
   const profileQuery = trpc.artisanProfile.get.useQuery({ artisanKey });
   const managedExperiencesQuery = trpc.experience.listForArtisan.useQuery({ artisanKey });
   const managedProductsQuery = trpc.product.listForArtisan.useQuery({ artisanKey });
+  const bookingsQuery = trpc.booking.listForArtisan.useQuery({ artisanKey });
+  const managedBookings = bookingsQuery.data ?? [];
   const createProfile = trpc.artisanProfile.getOrCreate.useMutation({ onSuccess: () => utils.artisanProfile.get.invalidate({ artisanKey }) });
   useEffect(() => { if (profileQuery.isSuccess && !profileQuery.data && !createProfile.isPending) createProfile.mutate({ artisanKey, personalName: fallbackName }); }, [artisanKey, createProfile, fallbackName, profileQuery.data, profileQuery.isSuccess]);
   useEffect(() => { let mounted = true; fetchCraftCatalogue().then((result) => { if (mounted) setRailwayCatalogue(result); }); return () => { mounted = false; }; }, []);
@@ -60,11 +62,123 @@ export default function Artisan() {
     : active === "interest" ? <ArtisanBookingInbox artisanKey={artisanKey} />
     : active === "edit-profile" ? <ProfileEditor profile={profile} craftOptions={railwayCraftOptions} isCatalogueLoading={railwayCatalogue === null} onSaved={(saved) => { updateSessionName(saved.personalName); selectTab("profile"); }} />
     : active === "profile" ? <Profile profile={profile} onEdit={() => selectTab("edit-profile")} />
-    : <Dashboard state={state} experiences={managedExperiences} profile={profile} setActive={selectTab} />;
+    : <Dashboard managedProducts={managedProducts} experiences={managedExperiences} bookings={managedBookings} profile={profile} setActive={selectTab} />;
   return <RoleAppShell role="artisan" eyebrow={`${profile.studioName} / artisan studio`} title="Your craft, in reach." locationLabel={[profile.location, profile.state].filter(Boolean).join(", ")} identityName={profile.personalName} items={artisanItems} active={active} onSelect={selectTab}>{content}</RoleAppShell>;
 }
 
-function Dashboard({ state, experiences, profile, setActive }: { state: ReturnType<typeof artisanDemoService.getState>; experiences: ManagedExperience[]; profile: ArtisanPublicProfile; setActive: (id: string) => void }) { const productViews = state.products.reduce((sum, product) => sum + product.views, 0); const bookings = experiences.reduce((sum, experience) => sum + experience.bookingCount, 0); const revenue = state.orders.reduce((sum, order) => sum + order.amount, 0); const stats = [{ value: 1248, label: "Profile views", note: "+18% this month", icon: Eye }, { value: productViews, label: "Product views", note: `${state.products.length} live objects`, icon: Package }, { value: state.orders.length, label: "Orders", note: `${state.orders.filter((order) => order.state !== "Completed").length} in progress`, icon: ShoppingBag }, { value: bookings, label: "Experience bookings", note: "managed database", icon: CalendarDays }]; return <><section className="workspace-hero"><div><span className="eyebrow">{profile.craftSpecialization} / today</span><h2>Your craft,<br /><em>discovered.</em></h2><p>{profile.personalName} is sharing a living practice from {profile.location} with travellers who want to slow down and learn.</p></div><button className="button button-primary" onClick={() => setActive("create-experience")}><Plus size={16} />Create experience</button></section><section className="role-metric-grid">{stats.map((stat) => <Metric key={stat.label} {...stat} />)}</section><section className="role-dual-grid"><article className="interest-feature demand-near-you"><div className="interest-feature-top"><span className="eyebrow eyebrow-light">Bookings & demand near {profile.location}</span><MapPinned size={20} /></div><h3><AnimatedNumber value={142} /> travellers<br /><em>planning nearby.</em></h3><p>Traveller experience requests are stored in the shared booking record. Open the Booking Inbox to accept or decline each pending visit.</p><div className="interest-pills"><span><strong>{bookings}</strong> managed bookings</span><span><strong>14</strong> experiences</span><span><strong>09</strong> local stories</span></div><button className="text-link-light" onClick={() => setActive("interest")}>Review booking inbox <ArrowUpRight size={15} /></button></article><article className="artisan-mini-card"><span className="eyebrow">Public profile</span><h3>{profile.studioName}<br /><em>in view.</em></h3><div className="trend-lines"><span>{profile.personalName} <b>maker</b></span><span>{profile.yearsOfPractice} years <b>practice</b></span><span>{profile.languages || "Add languages"} <b>spoken</b></span></div><button className="underlined-link" onClick={() => setActive("profile")}>Edit public profile <ArrowUpRight size={14} /></button></article></section><section className="role-content-grid"><div className="content-panel"><div className="content-panel-head"><div><span className="eyebrow">Products</span><h3>Made in the studio</h3></div><button onClick={() => setActive("products")}>View all <ArrowUpRight size={14} /></button></div><div className="product-lines">{state.products.slice(0, 2).map((product) => <div key={product.id}><span className="product-swatch" /><span><strong>{product.name}</strong><small>{product.stock} in stock · {product.views} route views</small></span><b>{money(product.price)}</b></div>)}</div></div><div className="content-panel"><div className="content-panel-head"><div><span className="eyebrow">Recent orders</span><h3>New on your table</h3></div><button onClick={() => setActive("orders")}>View all <ArrowUpRight size={14} /></button></div><div className="order-lines">{state.orders.slice(0, 2).map((order) => <div key={order.id}><span><strong>{order.guest}</strong><small>{order.item}</small></span><b>{money(order.amount)}</b><i>{order.state}</i></div>)}</div></div></section></>; }
+function Dashboard({ managedProducts, experiences, bookings, profile, setActive }: { managedProducts: ManagedProduct[]; experiences: ManagedExperience[]; bookings: any[]; profile: ArtisanPublicProfile; setActive: (id: string) => void }) {
+  const pendingBookings = bookings.filter((item) => item.booking?.status === "pending");
+  const acceptedBookings = bookings.filter((item) => item.booking?.status === "accepted");
+  const totalBookingCount = experiences.reduce((sum, experience) => sum + (experience.bookingCount || 0), 0) || bookings.length;
+  const stats = [
+    { value: profile.yearsOfPractice || 0, label: "Years of Practice", note: `${profile.location || "India"}${profile.state ? `, ${profile.state}` : ""}`, icon: Eye },
+    { value: managedProducts.length, label: "Studio Products", note: `${managedProducts.filter((p) => p.available).length} available online`, icon: Package },
+    { value: experiences.length, label: "Experiences", note: `${experiences.filter((e) => e.available).length} published`, icon: CalendarDays },
+    { value: totalBookingCount, label: "Total Bookings", note: `${pendingBookings.length} awaiting confirmation`, icon: ShoppingBag },
+  ];
+  return (
+    <>
+      <section className="workspace-hero">
+        <div>
+          <span className="eyebrow">{profile.craftSpecialization} / today</span>
+          <h2>Your craft,<br /><em>discovered.</em></h2>
+          <p>{profile.personalName} is sharing a living practice from {profile.location}{profile.state ? `, ${profile.state}` : ""} with travellers who want to slow down and learn.</p>
+        </div>
+        <button className="button button-primary" onClick={() => setActive("create-experience")}>
+          <Plus size={16} />Create experience
+        </button>
+      </section>
+      <section className="role-metric-grid">
+        {stats.map((stat) => <Metric key={stat.label} {...stat} />)}
+      </section>
+      <section className="role-dual-grid">
+        <article className="interest-feature demand-near-you">
+          <div className="interest-feature-top">
+            <span className="eyebrow eyebrow-light">Bookings & demand near {profile.location}</span>
+            <MapPinned size={20} />
+          </div>
+          <h3>
+            <AnimatedNumber value={totalBookingCount} /> traveller{totalBookingCount === 1 ? "" : "s"}<br />
+            <em>connected.</em>
+          </h3>
+          <p>Traveller experience requests are stored in the shared booking record. Open the Booking Inbox to accept or decline each pending visit.</p>
+          <div className="interest-pills">
+            <span><strong>{bookings.length}</strong> managed bookings</span>
+            <span><strong>{experiences.length}</strong> experiences</span>
+            <span><strong>{managedProducts.length}</strong> studio objects</span>
+          </div>
+          <button className="text-link-light" onClick={() => setActive("interest")}>
+            Review booking inbox <ArrowUpRight size={15} />
+          </button>
+        </article>
+        <article className="artisan-mini-card">
+          <span className="eyebrow">Public profile</span>
+          <h3>{profile.studioName}<br /><em>in view.</em></h3>
+          <div className="trend-lines">
+            <span>{profile.personalName} <b>maker</b></span>
+            <span>{profile.yearsOfPractice} years <b>practice</b></span>
+            <span>{profile.languages || "Add languages"} <b>spoken</b></span>
+          </div>
+          <button className="underlined-link" onClick={() => setActive("profile")}>
+            Edit public profile <ArrowUpRight size={14} />
+          </button>
+        </article>
+      </section>
+      <section className="role-content-grid">
+        <div className="content-panel">
+          <div className="content-panel-head">
+            <div>
+              <span className="eyebrow">Products</span>
+              <h3>Made in the studio</h3>
+            </div>
+            <button onClick={() => setActive("products")}>View all <ArrowUpRight size={14} /></button>
+          </div>
+          <div className="product-lines">
+            {managedProducts.length ? (
+              managedProducts.slice(0, 2).map((product) => (
+                <div key={product.id}>
+                  {product.imageUrl ? <img src={product.imageUrl} alt="" style={{ width: 24, height: 24, borderRadius: 4, objectFit: "cover" }} /> : <span className="product-swatch" />}
+                  <span>
+                    <strong>{product.name}</strong>
+                    <small>{product.quantity} in stock · {product.available ? "Published" : "Draft"}</small>
+                  </span>
+                  <b>{money(product.price)}</b>
+                </div>
+              ))
+            ) : (
+              <p className="body-copy" style={{ padding: "8px 0" }}>No studio products published yet.</p>
+            )}
+          </div>
+        </div>
+        <div className="content-panel">
+          <div className="content-panel-head">
+            <div>
+              <span className="eyebrow">Recent bookings</span>
+              <h3>New on your table</h3>
+            </div>
+            <button onClick={() => setActive("interest")}>View all <ArrowUpRight size={14} /></button>
+          </div>
+          <div className="order-lines">
+            {bookings.length ? (
+              bookings.slice(0, 2).map((item) => (
+                <div key={item.booking.id}>
+                  <span>
+                    <strong>{item.booking.travellerName}</strong>
+                    <small>{item.experience?.title ?? "Managed experience"} · {item.booking.bookingDate}</small>
+                  </span>
+                  <b>{item.booking.bookingTime || "Confirmed"}</b>
+                  <i>{item.booking.status}</i>
+                </div>
+              ))
+            ) : (
+              <p className="body-copy" style={{ padding: "8px 0" }}>No traveller bookings received yet.</p>
+            )}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
 
 function Products({ products, setActive, onEdit, onSync }: { products: ArtisanProduct[]; setActive: (id: string) => void; onEdit: (id: string) => void; onSync: () => void }) { const adjust = (id: string, delta: number) => { artisanDemoService.adjustStock(id, delta); onSync(); }; const remove = (product: ArtisanProduct) => { artisanDemoService.deleteProduct(product.id); onSync(); toast.success(`${product.name} removed from the local studio catalogue.`); }; return <section className="role-page"><div className="workspace-hero compact"><div><span className="eyebrow">Studio catalogue</span><h2>Your <em>products.</em></h2><p>Manage objects, stock, and the stories travellers discover.</p></div><button className="button button-primary" onClick={() => setActive("add-product")}><Plus size={16} />Add product</button></div><div className="role-table role-table-artisan"><div className="role-table-head"><span>Product</span><span>Price</span><span>Stock</span><span>Views</span><span>Status</span><span>Actions</span></div>{products.map((product) => <div key={product.id} className="role-table-row"><span className="table-product"><i /><b>{product.name}</b></span><span>{money(product.price)}</span><span className="stock-editor"><button onClick={() => adjust(product.id, -1)} aria-label={`Reduce ${product.name} stock`}><ChevronDown size={13} /></button><b>{product.stock}</b><button onClick={() => adjust(product.id, 1)} aria-label={`Increase ${product.name} stock`}><ChevronUp size={13} /></button></span><span>{product.views}</span><span className={`table-status ${product.status === "Live" ? "table-status-live" : ""}`}>{product.status}</span><span className="table-row-actions"><button onClick={() => onEdit(product.id)}><Edit3 size={14} />Edit</button><button onClick={() => remove(product)}><Trash2 size={14} />Delete</button></span></div>)}</div></section>; }
 

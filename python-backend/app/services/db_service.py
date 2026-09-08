@@ -79,3 +79,34 @@ def init_db():
         logger.info("Database initialization completed successfully.")
     except Exception as e:
         logger.warning(f"init_db non-fatal warning: {e}")
+
+
+def get_all_artisans_with_coords() -> list:
+    """
+    Fetches all artisans with valid lat/lng coordinates from artisan_profiles.
+    Returns list of dicts. Wrapped in try/except returning [] on error so
+    missing tables/errors never break caller routes.
+    """
+    try:
+        conn = get_connection()
+        try:
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(
+                "SELECT id, artisanKey, studioName, personalName, craftSpecialization, "
+                "location, state, lat, lng FROM artisan_profiles "
+                "WHERE lat IS NOT NULL AND lng IS NOT NULL"
+            )
+            rows = cursor.fetchall()
+            cursor.close()
+            # Ensure Decimal lat/lng are converted to float for JSON serializability
+            for row in rows:
+                if row.get("lat") is not None:
+                    row["lat"] = float(row["lat"])
+                if row.get("lng") is not None:
+                    row["lng"] = float(row["lng"])
+            return rows
+        finally:
+            conn.close()
+    except Exception as e:
+        logger.warning(f"Failed to fetch artisans with coordinates (non-fatal): {e}")
+        return []

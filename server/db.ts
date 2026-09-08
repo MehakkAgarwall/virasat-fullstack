@@ -302,6 +302,8 @@ export async function listAllArtisanProfiles() {
     profilePhotoUrl: row.profilePhotoUrl,
     yearsOfPractice: row.yearsOfPractice,
     bio: row.bio.length > 150 ? row.bio.slice(0, 147) + "…" : row.bio,
+    lat: row.lat != null ? Number(row.lat) : null,
+    lng: row.lng != null ? Number(row.lng) : null,
   }));
 }
 
