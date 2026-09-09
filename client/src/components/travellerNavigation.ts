@@ -2,7 +2,6 @@ import { BookOpen, CalendarDays, Compass, MapPinned, Route, Settings2, UserRound
 
 export const travellerPrimaryNavigation = [
   { label: "Discover", href: "/explore", icon: Compass, match: (path: string) => path === "/explore" || path.startsWith("/craft/") || path.startsWith("/experience/") || path.startsWith("/product/") },
-  { label: "Artisans", shortLabel: "Artisans", href: "/artisans", icon: UserRound, match: (path: string) => path === "/artisans" || path.startsWith("/maker/") },
   { label: "Craft Atlas", shortLabel: "Atlas", href: "/atlas", icon: MapPinned, match: (path: string) => path === "/atlas" },
   { label: "Plan a Trail", shortLabel: "Plan", href: "/planner", icon: Route, match: (path: string) => path === "/planner" },
   { label: "My Journey", shortLabel: "Journey", href: "/traveller/journey", icon: Compass, match: (path: string) => path === "/traveller/journey" },

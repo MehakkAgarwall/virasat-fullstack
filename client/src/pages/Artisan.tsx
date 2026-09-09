@@ -15,6 +15,7 @@ import { ArtisanBookingInbox } from "../components/ArtisanBookingInbox";
 import { VoiceAssistant } from "../components/VoiceAssistant";
 
 const artisanItems: RoleNavItem[] = [{ id: "dashboard", label: "Dashboard", icon: BarChart3 }, { id: "products", label: "Products", icon: Package }, { id: "add-product", label: "Add Product", icon: Plus }, { id: "experiences", label: "Experiences", icon: CalendarDays }, { id: "orders", label: "Orders", icon: ShoppingBag }, { id: "enquiries", label: "Product Enquiries", icon: Send }, { id: "interest", label: "Booking Inbox", icon: Users }, { id: "profile", label: "Profile", icon: UserRound }];
+const persistenceEnabled = !import.meta.env.DEV;
 function money(value: number) { return `₹${value.toLocaleString("en-IN")}`; }
 type ArtisanPublicProfile = { artisanKey: string; primaryCraftId: number | null; studioName: string; personalName: string; craftSpecialization: string; location: string; state: string; yearsOfPractice: number; bio: string; profilePhotoUrl: string; coverPhotoUrl: string; publicContact: string; languages: string; experienceInfo: string; };
 type ManagedExperience = { id: string; artisanKey: string; craftId: number; title: string; description: string; location: string; duration: string; price: number; capacity: number; availableDates: string; availableTimes: string; previewImageUrl: string; coverImageUrl: string; galleryImageUrls: string[]; previewVideoUrl: string; youtubeVideoUrl: string; previewCaption: string; detourDistanceKm: string; detourMinutes: number; routeExplanation: string; available: number; bookingCount: number; };
@@ -35,9 +36,9 @@ export default function Artisan() {
   const [editingExperienceId, setEditingExperienceId] = useState<string | null>(null);
   const [railwayCatalogue, setRailwayCatalogue] = useState<CraftCatalogueResult | null>(null);
   const utils = trpc.useUtils();
-  const profileQuery = trpc.artisanProfile.get.useQuery({ artisanKey });
-  const managedExperiencesQuery = trpc.experience.listForArtisan.useQuery({ artisanKey });
-  const managedProductsQuery = trpc.product.listForArtisan.useQuery({ artisanKey });
+  const profileQuery = trpc.artisanProfile.get.useQuery({ artisanKey }, { enabled: persistenceEnabled });
+  const managedExperiencesQuery = trpc.experience.listForArtisan.useQuery({ artisanKey }, { enabled: persistenceEnabled });
+  const managedProductsQuery = trpc.product.listForArtisan.useQuery({ artisanKey }, { enabled: persistenceEnabled });
   const createProfile = trpc.artisanProfile.getOrCreate.useMutation({ onSuccess: () => utils.artisanProfile.get.invalidate({ artisanKey }) });
   useEffect(() => { if (profileQuery.isSuccess && !profileQuery.data && !createProfile.isPending) createProfile.mutate({ artisanKey, personalName: fallbackName }); }, [artisanKey, createProfile, fallbackName, profileQuery.data, profileQuery.isSuccess]);
   useEffect(() => { let mounted = true; fetchCraftCatalogue().then((result) => { if (mounted) setRailwayCatalogue(result); }); return () => { mounted = false; }; }, []);
