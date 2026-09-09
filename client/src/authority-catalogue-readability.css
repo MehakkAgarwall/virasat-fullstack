@@ -1,0 +1,25 @@
+.role-app-authority .authority-craft-list { gap:1.35rem; }
+.role-app-authority .authority-catalogue-toolbar { display:flex; align-items:end; justify-content:space-between; gap:1.5rem; margin:1.25rem 0 1.6rem; padding:1rem 1.1rem; border:1px solid rgba(232,195,119,.42); background:rgba(6,31,22,.62); }
+.role-app-authority .authority-catalogue-toolbar label { display:grid; flex:1; gap:.45rem; }
+.role-app-authority .authority-catalogue-toolbar label .eyebrow { color:#edc774; }
+.role-app-authority .authority-catalogue-toolbar input { width:100%; max-width:550px; border:1px solid rgba(232,195,119,.54); background:rgba(2,22,15,.74); color:#fff0cf; outline:none; padding:.7rem .85rem; font:600 .84rem Manrope,sans-serif; }
+.role-app-authority .authority-catalogue-toolbar input::placeholder { color:rgba(231,211,174,.66); }
+.role-app-authority .authority-catalogue-toolbar input:focus { border-color:#f2ca77; box-shadow:0 0 0 3px rgba(242,202,119,.13); }
+.role-app-authority .authority-catalogue-toolbar>div { display:flex; align-items:baseline; gap:.45rem; min-width:190px; }
+.role-app-authority .authority-catalogue-toolbar b { color:#f2ca77; font-family:"Cormorant Garamond",serif; font-size:2.6rem; line-height:.8; }
+.role-app-authority .authority-catalogue-toolbar>div span { color:#decba5; font:800 .56rem/1.35 Manrope,sans-serif; letter-spacing:.07em; text-transform:uppercase; }
+.role-app-authority .authority-browse-record { background:linear-gradient(135deg,rgba(12,44,33,.98),rgba(5,27,20,.98)) !important; }
+.role-app-authority .authority-browse-record .underlined-link { color:#d9c7a4 !important; }
+.role-app-authority .authority-browse-record:hover .underlined-link { color:#f2ca77 !important; }
+.authority-catalogue-empty { margin-top:1.25rem; color:#ead5ab !important; }
+@media (max-width:700px) { .role-app-authority .authority-catalogue-toolbar { align-items:stretch; flex-direction:column; } .role-app-authority .authority-catalogue-toolbar>div { min-width:0; } }
+.role-app-authority .authority-craft-list article { position:relative; overflow:hidden; min-height:205px; border:1px solid rgba(232,195,119,.72) !important; background:linear-gradient(135deg,rgba(19,60,45,.99),rgba(6,29,21,.99)) !important; box-shadow:0 14px 30px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,232,181,.12) !important; }
+.role-app-authority .authority-craft-list article::after { position:absolute; inset:8px; border:1px solid rgba(232,195,119,.2); content:""; pointer-events:none; }
+.role-app-authority .authority-craft-list article>span { position:relative; z-index:1; display:inline-block; color:#efc978 !important; font:800 .66rem/1 Manrope,sans-serif; letter-spacing:.1em; opacity:1 !important; text-shadow:none !important; }
+.role-app-authority .authority-craft-list article h3 { position:relative; z-index:1; margin:.85rem 0 .65rem; color:#fff0cf !important; font-family:"Cormorant Garamond",serif; font-size:clamp(2rem,3vw,3.2rem); font-weight:600; line-height:.9; opacity:1 !important; text-shadow:0 2px 14px rgba(0,0,0,.24) !important; }
+.role-app-authority .authority-craft-list article p { position:relative; z-index:1; color:#e3d4b7 !important; font-size:.86rem; font-weight:600; opacity:1 !important; text-shadow:none !important; }
+.role-app-authority .authority-craft-list article .underlined-link { position:relative; z-index:2; display:inline-flex; align-items:center; gap:.45rem; margin-top:.95rem; color:#f2ca77 !important; font-weight:800; opacity:1 !important; text-shadow:none !important; }
+.role-app-authority .authority-craft-list article .underlined-link svg { color:#f2ca77 !important; }
+.role-app-authority .authority-craft-list article:hover { border-color:#f2ca77 !important; box-shadow:0 18px 34px rgba(0,0,0,.28),0 0 0 1px rgba(242,202,119,.2),inset 0 1px 0 rgba(255,232,181,.18) !important; }
+.role-app-authority .authority-craft-list article:hover h3 { color:#fff7e5 !important; }
+@media (max-width:700px) { .role-app-authority .authority-craft-list article { min-height:178px; } .role-app-authority .authority-craft-list article h3 { font-size:2.2rem; } }

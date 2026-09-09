@@ -1,0 +1,33 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "MySQL",
+            "database": "mysql",
+            "username": "root"
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "thomas.proxy.rlwy.net",
+            "port": 42642,
+            "driver": "MySQL",
+            "name": "railway virasat",
+            "database": "railway",
+            "username": "root",
+            "password": "dcGREwvVgVPvqZrtGJnbcNpJxRfCNofO"
+        }
+    ]
+}

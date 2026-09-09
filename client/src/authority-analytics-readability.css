@@ -1,0 +1,32 @@
+/* Tourism Analytics contrast boundary: keeps every analytical reading surface clear over the Authority forest workspace. */
+.role-app-authority .authority-analytics-page .workspace-hero .eyebrow { color:#efca79 !important; }
+.role-app-authority .authority-analytics-page .workspace-hero h2 { color:#fff2d5 !important; }
+.role-app-authority .authority-analytics-page .workspace-hero h2 em { color:#e9a47c !important; }
+.role-app-authority .authority-analytics-page .workspace-hero p { color:#eadabd !important; opacity:1 !important; }
+.role-app-authority .authority-region-tabs { display:flex; flex-wrap:wrap; gap:.5rem; margin:1.6rem 0 1.9rem; }
+.role-app-authority .authority-region-tabs button { border:1px solid rgba(239,202,121,.45); background:rgba(5,34,24,.62); color:#f4dfb4; font:800 .64rem/1.1 Manrope,sans-serif; letter-spacing:.075em; padding:.68rem .78rem; text-transform:uppercase; transition:background .18s ease-out,color .18s ease-out,border-color .18s ease-out; }
+.role-app-authority .authority-region-tabs button:hover,.role-app-authority .authority-region-tabs .authority-region-active { border-color:#f2ca77; background:#f2ca77; color:#183d2e; }
+.role-app-authority .authority-analytics-page .analytics-signal-card { border:1px solid rgba(190,146,80,.46); background:#fff6e3 !important; box-shadow:0 13px 28px rgba(0,0,0,.16); }
+.role-app-authority .authority-analytics-page .analytics-signal-card .analytics-board-head { border-color:rgba(71,71,51,.24); }
+.role-app-authority .authority-analytics-page .analytics-signal-card .eyebrow { color:#83512f !important; }
+.role-app-authority .authority-analytics-page .analytics-signal-card .analytics-board-head strong { color:#234c3c !important; }
+.role-app-authority .authority-analytics-page .analytics-signal-card p { color:#365748 !important; opacity:1 !important; }
+.role-app-authority .authority-analytics-page .category-demand-list b { color:#183d2e !important; }
+.role-app-authority .authority-analytics-page .category-demand-list small { color:#775238 !important; opacity:1 !important; }
+.role-app-authority .authority-analytics-page .category-demand-list i { background:#ddd1b6 !important; }
+.role-app-authority .authority-analytics-page .category-demand-list i em { background:linear-gradient(90deg,#b36445,#d6a657) !important; }
+.role-app-authority .authority-analytics-page .authority-craft-ranking { border:1px solid rgba(239,202,121,.43); background:linear-gradient(135deg,#164837,#082c20) !important; box-shadow:0 13px 29px rgba(0,0,0,.18); }
+.role-app-authority .authority-analytics-page .authority-craft-ranking .analytics-board-head { border-color:rgba(246,224,178,.29); }
+.role-app-authority .authority-analytics-page .authority-craft-ranking .eyebrow { color:#f2ca77 !important; }
+.role-app-authority .authority-analytics-page .authority-craft-ranking .analytics-board-head>span:last-child { color:#ead5ac !important; opacity:1 !important; }
+.role-app-authority .authority-analytics-page .authority-craft-ranking .analytics-row { border-color:rgba(246,224,178,.18); }
+.role-app-authority .authority-analytics-page .authority-craft-ranking .analytics-row>span,.role-app-authority .authority-analytics-page .authority-craft-ranking .analytics-row>em { color:#efcc88 !important; opacity:1 !important; }
+.role-app-authority .authority-analytics-page .authority-craft-ranking .analytics-row strong { color:#fff0d1 !important; opacity:1 !important; }
+.role-app-authority .authority-analytics-page .authority-craft-ranking .analytics-row i { background:rgba(255,239,205,.2) !important; }
+.role-app-authority .authority-analytics-page .authority-route-board { border:1px solid rgba(239,202,121,.44); background:#f4ead7 !important; }
+.role-app-authority .authority-analytics-page .authority-route-board .eyebrow { color:#8a5736 !important; }
+.role-app-authority .authority-analytics-page .authority-route-board h3 { color:#183d2e !important; }
+.role-app-authority .authority-analytics-page .authority-route-board h3 em { color:#a65d40 !important; }
+.role-app-authority .authority-analytics-page .authority-route-board p,.role-app-authority .authority-analytics-page .authority-route-board ol small { color:#365748 !important; opacity:1 !important; }
+.role-app-authority .authority-analytics-page .authority-route-board ol strong { color:#183d2e !important; }
+@media (max-width:700px) { .role-app-authority .authority-region-tabs { margin-bottom:1.25rem; gap:.4rem; } .role-app-authority .authority-region-tabs button { font-size:.59rem; padding:.58rem .62rem; } }
