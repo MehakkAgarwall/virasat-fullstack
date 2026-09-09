@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 export const DEFAULT_ARTISAN_PROFILE_VISUAL = "https://commons.wikimedia.org/wiki/Special:FilePath/Lota%20brass.JPG";
+=======
+export const DEFAULT_ARTISAN_PROFILE_VISUAL = "/manus-storage/virasat-cinematic-hero_a6f216e0.jpg";
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
 
 type PublicProfileMedia = {
   profilePhotoUrl?: string | null;

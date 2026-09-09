@@ -120,6 +120,14 @@
     },
     "overrides": {
       "tailwindcss>nanoid": "3.3.7"
+<<<<<<< HEAD
     }
+=======
+    },
+    "onlyBuiltDependencies": [
+      "@tailwindcss/oxide",
+      "esbuild"
+    ]
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
   }
 }

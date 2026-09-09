@@ -11,7 +11,10 @@ import {
 import { trpc } from "../lib/trpc";
 
 const scopes: DemoStateScope[] = ["traveller", "artisan", "authority"];
+<<<<<<< HEAD
 const persistenceEnabled = !import.meta.env.DEV;
+=======
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
 
 /** Live craft detail is a read-only Railway-backed view and does not need a managed demo-state sync. */
 export const shouldSyncDemoStateForPathname = (pathname: string) => !/^\/craft\/api-\d+$/.test(pathname);
@@ -28,13 +31,20 @@ export function DemoStatePersistence() {
   const subjectKey = session ? `demo-${session.id}` : visitorSubject;
   const hydratedFor = useRef<string | null>(null);
   const save = trpc.demoState.save.useMutation();
+<<<<<<< HEAD
   const { data } = trpc.demoState.list.useQuery({ subjectKey }, { enabled: persistenceEnabled, retry: 1 });
+=======
+  const { data } = trpc.demoState.list.useQuery({ subjectKey }, { retry: 1 });
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
 
   useEffect(() => {
     const onStateChange = (event: Event) => {
       const detail = (event as CustomEvent<DemoStateChange>).detail;
       if (!detail) return;
+<<<<<<< HEAD
       if (!persistenceEnabled) return;
+=======
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
       save.mutate({ subjectKey, scope: detail.scope, payload: detail.payload });
     };
     window.addEventListener(DEMO_STATE_CHANGE_EVENT, onStateChange);
@@ -42,7 +52,11 @@ export function DemoStatePersistence() {
   }, [save, subjectKey]);
 
   useEffect(() => {
+<<<<<<< HEAD
     if (!persistenceEnabled || !data || hydratedFor.current === subjectKey) return;
+=======
+    if (!data || hydratedFor.current === subjectKey) return;
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
     hydratedFor.current = subjectKey;
 
     const savedScopes = new Set(data.map((entry) => entry.scope));

@@ -1,0 +1,148 @@
+.craft-story-grid-rich {
+  grid-template-columns: .28fr .72fr 1.42fr;
+  gap: clamp(32px, 5vw, 84px);
+  align-items: start;
+}
+
+.craft-hero-route-meta a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 9px;
+  border: 1px solid rgba(246, 240, 230, 0.2);
+  color: #f3ce82;
+  font-size: 9px;
+  transition: border-color .18s var(--ease-out), background .18s var(--ease-out), transform .18s var(--ease-out);
+}
+
+.craft-hero-route-meta a:hover {
+  border-color: rgba(243, 206, 130, .8);
+  background: rgba(243, 206, 130, .1);
+  transform: translateY(-2px);
+}
+
+.craft-hero-route-meta a:focus-visible { outline: 2px solid #f3ce82; outline-offset: 3px; }
+
+.craft-story-material {
+  position: relative;
+  min-height: 520px;
+  margin: 0;
+  overflow: hidden;
+  background: var(--forest);
+}
+
+.craft-story-material img {
+  width: 100%;
+  height: 520px;
+  object-fit: cover;
+  filter: saturate(.7) contrast(1.04) sepia(.13);
+  transition: transform .7s var(--ease-out);
+}
+
+.craft-story-material:hover img { transform: scale(1.045); }
+.craft-story-material:after { content:""; position:absolute; inset:0; background:linear-gradient(180deg,transparent 30%,rgba(10,42,36,.86)); }
+
+.craft-story-material figcaption {
+  position: absolute;
+  z-index: 1;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
+  display: grid;
+  gap: 5px;
+  color: var(--ivory);
+}
+
+.craft-story-material figcaption span { color: #ecc374; font-size: 8px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+.craft-story-material figcaption b { font-family: "Cormorant Garamond", serif; font-size: 31px; font-weight: 500; line-height: .85; }
+.craft-story-material figcaption i { width: 72%; height: 1px; margin-top: 8px; background: repeating-linear-gradient(90deg, #e5b859 0 4px, transparent 4px 9px); }
+.craft-story-copy { padding-top: 2px; }
+
+.craft-story-route-thread { display:flex; align-items:center; gap:6px; margin:23px 0 2px; color:var(--terracotta); }
+.craft-story-route-thread span { width:52px; height:1px; background:var(--gold); }
+.craft-story-route-thread i { width:5px; height:5px; border-radius:50%; background:var(--gold); }
+.craft-story-route-thread b { margin-left:5px; color:#8d725b; font:700 8px "Manrope",sans-serif; letter-spacing:.13em; text-transform:uppercase; }
+
+.craft-journey-cta { overflow:hidden; }
+.craft-journey-cta-grid { display:grid; grid-template-columns:minmax(250px,.92fr) 1.08fr; gap:clamp(34px,7vw,116px); align-items:center; }
+.craft-journey-cta-visual { position:relative; min-height:390px; overflow:hidden; background:var(--forest); }
+.craft-journey-cta-visual img { width:100%; height:390px; object-fit:cover; filter:saturate(.73) sepia(.08); }
+.craft-journey-cta-visual:after { content:""; position:absolute; inset:0; background:linear-gradient(135deg,rgba(12,50,43,.15),rgba(12,50,43,.82)); }
+.craft-journey-cta-visual span { position:absolute; z-index:1; left:17px; bottom:17px; color:var(--ivory); font-size:9px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
+.craft-journey-cta-visual i { position:absolute; z-index:1; right:16px; bottom:17px; width:86px; height:1px; background:repeating-linear-gradient(90deg,#e8bc65 0 5px,transparent 5px 10px); }
+.craft-journey-cta h2 { margin-top:16px; color:var(--forest); font-size:clamp(54px,5vw,78px); line-height:.88; }
+.craft-journey-cta h2 em { color:var(--terracotta); }
+.craft-journey-cta p { max-width:460px; margin-top:20px; color:#72766e; font-size:14px; line-height:1.8; }
+
+.craft-continue-section { position:relative; overflow:hidden; padding:8.5rem 0; background:var(--forest); color:var(--ivory); }
+.craft-continue-section:before { content:""; position:absolute; inset:0; opacity:.4; background:radial-gradient(circle at 89% 14%,transparent 0 44px,rgba(230,190,109,.3) 45px 46px,transparent 47px 62px,rgba(230,190,109,.16) 63px 64px,transparent 65px); }
+.craft-continue-grid { position:relative; z-index:1; display:grid; grid-template-columns:minmax(290px,.93fr) 1.07fr; gap:clamp(38px,8vw,130px); align-items:center; }
+.craft-continue-visual { position:relative; min-height:450px; overflow:hidden; background:#0b2e29; }
+.craft-continue-visual img { width:100%; height:450px; object-fit:cover; opacity:.7; filter:saturate(.67) sepia(.12); }
+.craft-continue-visual:after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(8,38,33,.18),rgba(8,38,33,.91)); }
+.craft-continue-visual>div { position:absolute; z-index:1; left:18px; bottom:17px; display:grid; gap:4px; color:var(--ivory); }
+.craft-continue-visual span { color:#edc476; font-size:8px; font-weight:800; letter-spacing:.15em; text-transform:uppercase; }
+.craft-continue-visual b { font-family:"Cormorant Garamond",serif; font-size:34px; font-weight:500; line-height:.85; }
+.craft-continue-visual>i { position:absolute; z-index:1; right:17px; top:18px; width:44px; height:44px; border:1px dashed rgba(238,197,117,.7); border-radius:50%; }
+.craft-continue-copy h2 { margin-top:17px; font-size:clamp(58px,5.5vw,84px); line-height:.86; }
+.craft-continue-copy h2 em { color:#e4a176; }
+.craft-continue-copy p { max-width:470px; margin-top:23px; color:rgba(246,240,230,.68); font-size:14px; line-height:1.85; }
+.craft-continue-copy .experience-detail-meta span { border-color:rgba(246,240,230,.24); color:#f0dec0; }
+.craft-continue-thread { display:flex; align-items:center; justify-content:flex-end; gap:5px; max-width:500px; margin:11px 0 24px; }
+.craft-continue-thread:before { content:""; flex:1; height:1px; background:rgba(235,190,105,.36); }
+.craft-continue-thread i { width:5px; height:5px; background:#e7bc63; }
+
+@media (max-width: 900px) {
+  .craft-story-grid-rich { grid-template-columns:.25fr .75fr 1.25fr; gap:28px; }
+  .craft-story-material, .craft-story-material img { min-height:430px; height:430px; }
+}
+
+@media (max-width: 700px) {
+  .craft-story-grid-rich, .craft-journey-cta-grid, .craft-continue-grid { grid-template-columns:1fr; gap:28px; }
+  .craft-story-grid-rich aside { display:flex; flex-direction:row; align-items:center; gap:12px; }
+  .craft-story-grid-rich aside .side-stitch { width:48px; height:1px; margin:0; background:repeating-linear-gradient(90deg,var(--gold) 0 4px,transparent 4px 10px); }
+  .craft-story-material, .craft-story-material img { min-height:350px; height:350px; }
+  .craft-journey-cta-visual, .craft-journey-cta-visual img { min-height:310px; height:310px; }
+  .craft-continue-section { padding:5.5rem 0; }
+  .craft-continue-visual, .craft-continue-visual img { min-height:350px; height:350px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .craft-story-material img { transition:none; }
+  .craft-story-material:hover img { transform:none; }
+}
+
+/* Reference-led Mysore Silk stage: a warm working image, museum-green panels, and a single visible cultural route. */
+.craft-detail-page main:has(.craft-reference-band) { position: relative; background: #082e28; }
+.craft-reference-band { position: absolute; z-index: 5; top: 546px; right: 0; left: 0; pointer-events: none; }
+.craft-reference-band-grid { display: grid; grid-template-columns: .97fr 1.03fr; gap: 16px; align-items: stretch; }
+.craft-reference-route-card,
+.craft-reference-atlas { min-height: 196px; padding: 21px 23px; border: 1px solid rgba(235, 193, 104, .45); border-radius: 14px; background: linear-gradient(135deg, rgba(5, 38, 32, .94), rgba(10, 52, 43, .9)); box-shadow: inset 0 1px rgba(255, 236, 185, .08), 0 18px 40px rgba(2, 17, 13, .22); color: var(--ivory); backdrop-filter: blur(12px); pointer-events: auto; }
+.craft-reference-band .eyebrow { color: #e6bd6b; font-size: 8px; }
+.craft-reference-route-stops { display: flex; align-items: center; gap: 11px; margin-top: 23px; color: rgba(246, 240, 230, .78); font-size: 11px; font-weight: 700; }
+.craft-reference-route-stops strong { color: #efc46c; font-family: "Cormorant Garamond", serif; font-size: 20px; font-weight: 500; }
+.craft-reference-route-stops i { flex: 1; min-width: 15px; height: 1px; background: repeating-linear-gradient(90deg, rgba(232, 190, 103, .72) 0 4px, transparent 4px 9px); }
+.craft-reference-route-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 21px; padding-top: 15px; border-top: 1px solid rgba(236, 195, 106, .2); }
+.craft-reference-route-facts span { display: grid; gap: 4px; padding-left: 13px; border-left: 1px solid rgba(236, 195, 106, .2); }
+.craft-reference-route-facts span:first-child { padding-left: 0; border-left: 0; }
+.craft-reference-route-facts b { color: #f4dc9d; font-family: "Cormorant Garamond", serif; font-size: 21px; font-weight: 500; line-height: .9; }
+.craft-reference-route-facts small { color: rgba(246, 240, 230, .55); font-size: 8px; letter-spacing: .04em; }
+.craft-reference-atlas { position: relative; overflow: hidden; padding-bottom: 15px; background: linear-gradient(115deg, rgba(5, 37, 31, .97), rgba(12, 51, 42, .83)), url("/manus-storage/mysore-silk-handloom-cinematic_23795ccb.png") center 52% / cover; }
+.craft-reference-atlas:before { content: ""; position: absolute; inset: 0; opacity: .35; background-image: linear-gradient(90deg, rgba(230, 189, 111, .16) 1px, transparent 1px), linear-gradient(0deg, rgba(230, 189, 111, .13) 1px, transparent 1px); background-size: 34px 34px; pointer-events: none; }
+.craft-reference-atlas > * { position: relative; z-index: 1; }
+.craft-reference-atlas-head { display: flex; align-items: center; justify-content: space-between; color: #e7bf70; }
+.craft-reference-map-art { position: relative; height: 78px; margin: 8px 4px 0; }
+.craft-reference-map-route { position: absolute; top: 37px; right: 13%; left: 11%; height: 28px; border-top: 2px dashed #e9bd64; border-radius: 50%; transform: rotate(-8deg); }
+.craft-reference-map-route:after { content: ""; position: absolute; top: -3px; left: 43%; width: 9px; height: 9px; border: 2px solid #f1cf7e; border-radius: 50%; background: #153e35; box-shadow: 0 0 0 5px rgba(239, 196, 108, .12); }
+.craft-reference-map-city { position: absolute; color: rgba(246, 240, 230, .78); font-size: 8px; font-weight: 700; }
+.craft-reference-map-city:before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 5px; border: 1px solid #e9c26c; border-radius: 50%; background: #113e34; vertical-align: 1px; }
+.craft-reference-map-city-start { top: 11px; left: 1%; }.craft-reference-map-city-stop { right: 42%; bottom: 4px; }.craft-reference-map-city-end { top: 7px; right: 0; }
+.craft-reference-map-pin { position: absolute; right: 19%; bottom: 18px; width: 28px; height: 28px; display: grid; place-content: center; border: 2px solid #f1c56b; border-radius: 50% 50% 50% 0; background: #c66a46; color: #fff5d4; transform: rotate(-45deg); box-shadow: 0 7px 14px rgba(0, 0, 0, .25); }.craft-reference-map-pin svg { transform: rotate(45deg); }
+.craft-reference-atlas-actions { display: flex; justify-content: space-between; gap: 10px; padding-top: 10px; border-top: 1px solid rgba(236, 195, 106, .2); }.craft-reference-atlas-actions a { display: inline-flex; align-items: center; gap: 6px; color: #f2cf7f; font-size: 9px; font-weight: 800; }.craft-reference-atlas-actions .craft-reference-book { padding: 7px 10px; border-radius: 5px; background: #c96a47; color: #fff4da; }
+.craft-reference-band + .craft-detail-hero { min-height: 835px; background: #092f29; }.craft-reference-band + .craft-detail-hero > img { opacity: .89; filter: saturate(1.04) contrast(1.07) sepia(.06); }.craft-reference-band + .craft-detail-hero .craft-detail-hero-shade { background: linear-gradient(96deg, rgba(4, 24, 18, .91) 0%, rgba(6, 34, 27, .68) 43%, rgba(8, 42, 33, .16) 100%) !important; }.craft-reference-band + .craft-detail-hero .craft-detail-hero-content { min-height: 630px; padding-bottom: 170px; }.craft-reference-band + .craft-detail-hero h1 { max-width: 510px; font-size: clamp(68px, 7.5vw, 112px); }.craft-reference-band + .craft-detail-hero .craft-detail-hero-content > div > p { max-width: 414px; color: rgba(255, 243, 219, .85); font-size: 13px; line-height: 1.75; }.craft-reference-band + .craft-detail-hero .craft-hero-route-meta { gap: 8px; }.craft-reference-band + .craft-detail-hero .craft-hero-route-meta a, .craft-reference-band + .craft-detail-hero .craft-hero-route-meta button { border-color: rgba(237, 194, 108, .5); background: rgba(4, 28, 22, .38); }.craft-reference-band + .craft-detail-hero .craft-hero-object { display: flex; align-items: center; justify-content: flex-end; height: auto; }.craft-reference-band + .craft-detail-hero .craft-detail-caption { display: none; }
+
+.mysore-hero-experience-card { width: min(100%, 418px); min-height: 300px; padding: 27px 29px 16px; border: 1px solid rgba(237, 194, 108, .64); border-radius: 15px; background: linear-gradient(135deg, rgba(8, 47, 39, .94), rgba(12, 60, 49, .86)); box-shadow: inset 0 1px rgba(255, 239, 185, .12), 0 23px 43px rgba(0, 0, 0, .2); color: var(--ivory); }.mysore-hero-experience-card header { display: flex; align-items: center; justify-content: space-between; color: #e9bd68; }.mysore-hero-experience-card .eyebrow { color: #e9bd68; font-size: 8px; }.mysore-hero-experience-card h2 { margin-top: 18px; color: #fff0d5; font-size: 59px; line-height: .78; }.mysore-hero-experience-card p { max-width: 258px; margin-top: 18px; color: rgba(246, 240, 230, .66); font-size: 11px; line-height: 1.63; }.mysore-hero-experience-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 20px; padding-top: 14px; border-top: 1px solid rgba(236, 195, 106, .2); }.mysore-hero-experience-facts span { display: grid; grid-template-columns: 15px 1fr; gap: 5px; align-items: start; min-height: 34px; padding: 0 8px; border-left: 1px solid rgba(236, 195, 106, .2); color: rgba(246, 240, 230, .74); font-size: 8px; line-height: 1.35; }.mysore-hero-experience-facts span:first-child { padding-left: 0; border-left: 0; }.mysore-hero-experience-facts svg { color: #e9bd68; }.mysore-hero-book { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 39px; margin-top: 16px; border-radius: 7px; background: linear-gradient(90deg, #c9613d, #d6784d); color: #fff2d7; font-size: 10px; font-weight: 800; letter-spacing: .03em; transition: transform .18s var(--ease-out), filter .18s var(--ease-out); }.mysore-hero-book:hover { filter: brightness(1.08); transform: translateY(-2px); }.mysore-hero-book:focus-visible { outline: 2px solid #f1cd7d; outline-offset: 3px; }
+
+@media (max-width: 700px) {
+  .craft-reference-band { top: 548px; }.craft-reference-band-grid { grid-template-columns: 1fr; gap: 10px; }.craft-reference-route-card, .craft-reference-atlas { min-height: 0; padding: 16px; border-radius: 9px; }.craft-reference-route-stops { margin-top: 14px; gap: 7px; font-size: 9px; }.craft-reference-route-stops strong { font-size: 17px; }.craft-reference-route-facts { margin-top: 14px; padding-top: 11px; }.craft-reference-route-facts b { font-size: 17px; }.craft-reference-atlas { min-height: 180px; }.craft-reference-band + .craft-detail-hero { min-height: 1095px; }.craft-reference-band + .craft-detail-hero .craft-detail-hero-content { min-height: 570px; padding-top: 124px; padding-bottom: 205px; }.craft-reference-band + .craft-detail-hero h1 { max-width: 310px; font-size: 63px; }.craft-reference-band + .craft-detail-hero .craft-detail-hero-content > div > p { max-width: 310px; font-size: 12px; }.craft-reference-band + .craft-detail-hero .craft-hero-object { top: 338px; right: -16px; bottom: auto; width: 250px; height: auto; }.craft-reference-band + .craft-detail-hero .craft-material-object { min-height: 178px; padding: 17px; }.craft-reference-band + .craft-detail-hero .craft-material-object b { margin-top: 12px; font-size: 47px; }.craft-reference-band + .craft-detail-hero .craft-material-object:before { right: 13px; bottom: 12px; width: 67px; height: 82px; }.craft-reference-band + .craft-detail-hero .craft-material-object:after { right: 13px; bottom: 19px; left: 17px; max-width: 110px; font-size: 8px; }.craft-reference-band + .craft-detail-hero .craft-hero-route-meta { max-width: 310px; margin-top: 18px; }.craft-reference-band + .craft-detail-hero .craft-hero-route-meta a, .craft-reference-band + .craft-detail-hero .craft-hero-route-meta button { padding: 7px 8px; font-size: 8px; }
+}

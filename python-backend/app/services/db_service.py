@@ -76,6 +76,7 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         """)
+<<<<<<< HEAD
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS artisan_profiles (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -99,6 +100,8 @@ def init_db():
             INDEX idx_artisan_craft (primaryCraftId)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         """)
+=======
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
         create_table_sql = """
         CREATE TABLE IF NOT EXISTS artisan_interests (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -113,12 +116,21 @@ def init_db():
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         """
         cursor.execute(create_table_sql)
+<<<<<<< HEAD
         csv_path = Path(__file__).resolve().parents[1] / "data" / "crafts_seed.csv"
         with csv_path.open(newline="", encoding="utf-8-sig") as handle:
             rows = list(csv.DictReader(handle))
         cursor.execute("SELECT COUNT(*), COALESCE(SUM(image_url IS NOT NULL AND image_url <> ''), 0) FROM crafts")
         craft_count, craft_image_count = cursor.fetchone()
         if craft_count != len(rows) or craft_image_count < len(rows):
+=======
+        cursor.execute("SELECT COUNT(*) FROM crafts")
+        craft_count = int(cursor.fetchone()[0])
+        if craft_count < 300:
+            csv_path = Path(__file__).resolve().parents[1] / "data" / "crafts_seed.csv"
+            with csv_path.open(newline="", encoding="utf-8-sig") as handle:
+                rows = list(csv.DictReader(handle))
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
             if len(rows) >= 300:
                 cursor.execute("DELETE FROM crafts")
                 cursor.executemany(
@@ -139,6 +151,7 @@ def init_db():
                     ],
                 )
                 logger.info("Repaired crafts catalogue: loaded %s records from %s", len(rows), csv_path)
+<<<<<<< HEAD
         artisan_csv_path = Path(__file__).resolve().parents[1] / "data" / "artisan_profiles_seed.csv"
         with artisan_csv_path.open(newline="", encoding="utf-8-sig") as handle:
             artisan_rows = list(csv.DictReader(handle))
@@ -169,6 +182,8 @@ def init_db():
                 ],
             )
             logger.info("Loaded artisan profile catalogue: %s records from %s", len(artisan_rows), artisan_csv_path)
+=======
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
         conn.commit()
         cursor.close()
         conn.close()

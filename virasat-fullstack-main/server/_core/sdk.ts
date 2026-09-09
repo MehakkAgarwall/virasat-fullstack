@@ -273,14 +273,22 @@ class SDKServer {
     const session = await this.verifySession(sessionToken);
 
     if (!session) {
+<<<<<<< HEAD
       throw new ForbiddenError("Invalid session cookie");
+=======
+      throw ForbiddenError("Invalid session cookie");
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
     }
 
     if (session.openId.startsWith(CRON_OPEN_ID_PREFIX)) {
       const userInfo = await this.getUserInfoWithJwt(sessionToken ?? "");
       const taskUid = userInfo.taskUid ?? null;
       if (!taskUid) {
+<<<<<<< HEAD
         throw new ForbiddenError("Cron session missing task_uid");
+=======
+        throw ForbiddenError("Cron session missing task_uid");
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
       }
       return buildCronUser(userInfo);
     }
@@ -303,12 +311,20 @@ class SDKServer {
         user = await db.getUserByOpenId(userInfo.openId);
       } catch (error) {
         console.error("[Auth] Failed to sync user from OAuth:", error);
+<<<<<<< HEAD
         throw new ForbiddenError("Failed to sync user info");
+=======
+        throw ForbiddenError("Failed to sync user info");
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
       }
     }
 
     if (!user) {
+<<<<<<< HEAD
       throw new ForbiddenError("User not found");
+=======
+      throw ForbiddenError("User not found");
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
     }
 
     await db.upsertUser({

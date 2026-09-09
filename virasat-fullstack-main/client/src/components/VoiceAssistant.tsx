@@ -5,6 +5,7 @@ import { API_BASE_URL } from "../services/api";
 
 type AssistantResponse = {
   transcript: string;
+<<<<<<< HEAD
   language: string;
   reply_text: string;
   audio_base64: string;
@@ -21,6 +22,15 @@ type BrowserSpeechRecognition = {
   start: () => void;
   stop: () => void;
 };
+=======
+  detected_language: string;
+  detected_language_name: string;
+  reply_text: string;
+  reply_audio_base64: string;
+};
+
+type VoiceState = "idle" | "recording" | "processing" | "ready" | "error";
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
 
 function pickMimeType() {
   if (typeof MediaRecorder === "undefined") return "";
@@ -46,6 +56,7 @@ export function VoiceAssistant({ artisanName, craft }: { artisanName: string; cr
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+<<<<<<< HEAD
   const sessionIdRef = useRef<string | null>(null);
   const speechRecognitionRef = useRef<BrowserSpeechRecognition | null>(null);
   const speechTranscriptRef = useRef("");
@@ -55,6 +66,11 @@ export function VoiceAssistant({ artisanName, craft }: { artisanName: string; cr
   useEffect(() => () => {
     streamRef.current?.getTracks().forEach((track) => track.stop());
     speechRecognitionRef.current?.stop();
+=======
+
+  useEffect(() => () => {
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
     if (audioUrl) URL.revokeObjectURL(audioUrl);
   }, [audioUrl]);
 
@@ -72,6 +88,7 @@ export function VoiceAssistant({ artisanName, craft }: { artisanName: string; cr
     }
   };
 
+<<<<<<< HEAD
   const speakLocalReply = (text: string) => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
@@ -88,6 +105,8 @@ export function VoiceAssistant({ artisanName, craft }: { artisanName: string; cr
     speakLocalReply(reply);
   };
 
+=======
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
   const submitRecording = async (blob: Blob) => {
     if (!blob.size) {
       setState("error");
@@ -95,7 +114,12 @@ export function VoiceAssistant({ artisanName, craft }: { artisanName: string; cr
       return;
     }
     if (!API_BASE_URL) {
+<<<<<<< HEAD
       useOfflineReply();
+=======
+      setState("error");
+      setMessage("The voice service is not configured for this deployment yet.");
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
       return;
     }
     setState("processing");
@@ -103,15 +127,23 @@ export function VoiceAssistant({ artisanName, craft }: { artisanName: string; cr
     const form = new FormData();
     const extension = blob.type.includes("ogg") ? "ogg" : blob.type.includes("mp4") ? "mp4" : "webm";
     form.append("audio", blob, `virasat-artisan-query.${extension}`);
+<<<<<<< HEAD
     if (sessionIdRef.current) form.append("session_id", sessionIdRef.current);
     try {
       const result = await fetch(`${API_BASE_URL}/voice/chat`, { method: "POST", body: form });
       let body: AssistantResponse & { session_id?: string; detail?: string };
+=======
+    form.append("artisan_context", JSON.stringify({ name: artisanName, craft }));
+    try {
+      const result = await fetch(`${API_BASE_URL}/voice-assistant/query`, { method: "POST", body: form });
+      let body: AssistantResponse | { detail?: string };
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
       try {
         body = await result.json();
       } catch {
         throw new Error("The voice service returned an unreadable response.");
       }
+<<<<<<< HEAD
       if (!result.ok) throw new Error(body.detail || "The voice assistant could not process that recording.");
       if (!body.transcript || !body.reply_text) throw new Error("The voice service returned an incomplete response.");
       sessionIdRef.current = body.session_id ?? sessionIdRef.current;
@@ -119,16 +151,34 @@ export function VoiceAssistant({ artisanName, craft }: { artisanName: string; cr
       if (audioUrl) URL.revokeObjectURL(audioUrl);
       if (body.audio_base64) {
         const nextUrl = URL.createObjectURL(audioBlobFromBase64(body.audio_base64));
+=======
+      if (!result.ok) throw new Error((body as { detail?: string }).detail || "The voice assistant could not process that recording.");
+      const assistantResponse = body as AssistantResponse;
+      if (!assistantResponse.transcript || !assistantResponse.reply_text) throw new Error("The voice service returned an incomplete response.");
+      setResponse(assistantResponse);
+      if (audioUrl) URL.revokeObjectURL(audioUrl);
+      if (assistantResponse.reply_audio_base64) {
+        const nextUrl = URL.createObjectURL(audioBlobFromBase64(assistantResponse.reply_audio_base64));
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
         setAudioUrl(nextUrl);
         await playReply(nextUrl);
       } else {
         setMessage("The assistant replied in text, but voice playback was unavailable.");
       }
       setState("ready");
+<<<<<<< HEAD
       if (!body.audio_base64) setMessage("Your answer is ready below. Voice playback was unavailable.");
     } catch {
       useOfflineReply();
       toast.info("Live voice service unavailable. Continued in offline voice mode.");
+=======
+      if (!assistantResponse.reply_audio_base64) setMessage("Your answer is ready below.");
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : "The voice assistant is temporarily unavailable.";
+      setState("error");
+      setMessage(detail);
+      toast.error(detail);
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
     }
   };
 
@@ -144,13 +194,17 @@ export function VoiceAssistant({ artisanName, craft }: { artisanName: string; cr
       const mimeType = pickMimeType();
       const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
       chunksRef.current = [];
+<<<<<<< HEAD
       speechTranscriptRef.current = "";
+=======
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
       streamRef.current = stream;
       recorderRef.current = recorder;
       recorder.ondataavailable = (event) => { if (event.data.size) chunksRef.current.push(event.data); };
       recorder.onstop = () => {
         stream.getTracks().forEach((track) => track.stop());
         streamRef.current = null;
+<<<<<<< HEAD
         speechRecognitionRef.current?.stop();
         window.setTimeout(() => void submitRecording(new Blob(chunksRef.current, { type: recorder.mimeType || "audio/webm" })), 250);
       };
@@ -170,6 +224,11 @@ export function VoiceAssistant({ artisanName, craft }: { artisanName: string; cr
         speechRecognitionRef.current = recognition;
         recognition.start();
       }
+=======
+        void submitRecording(new Blob(chunksRef.current, { type: recorder.mimeType || "audio/webm" }));
+      };
+      recorder.start();
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
       setResponse(null);
       setAudioNeedsPlay(false);
       setState("recording");
@@ -198,7 +257,11 @@ export function VoiceAssistant({ artisanName, craft }: { artisanName: string; cr
       </button>
       <div className="voice-assistant-status" aria-live="polite">
         <span className="voice-status-icon">{state === "error" ? <AlertCircle size={16} /> : state === "ready" ? <CheckCircle2 size={16} /> : <Languages size={16} />}</span>
+<<<<<<< HEAD
         <strong>{recording ? "Your voice is being recorded" : state === "processing" ? "The assistant is listening" : state === "ready" ? `Heard in ${languageName(response?.language)}` : "Voice assistant"}</strong>
+=======
+        <strong>{recording ? "Your voice is being recorded" : state === "processing" ? "The assistant is listening" : state === "ready" ? `Heard in ${response?.detected_language_name ?? "your language"}` : "Voice assistant"}</strong>
+>>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
         <small>{message}</small>
       </div>
     </div>
