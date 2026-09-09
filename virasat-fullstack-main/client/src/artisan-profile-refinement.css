@@ -1,0 +1,121 @@
+/* Managed Artisan public profile — keeps the Virāsat studio language while making saved identity fields easy to scan. */
+.artisan-profile-managed {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.artisan-profile-cover {
+  min-height: 11rem;
+  display: flex;
+  align-items: flex-end;
+  padding: 1.25rem;
+  border: 1px solid rgba(216, 173, 98, .62);
+  background-position: center;
+  background-size: cover;
+  box-shadow: inset 0 -1px 0 rgba(244, 229, 206, .12);
+}
+
+.artisan-managed-profile-grid {
+  display: grid;
+  grid-template-columns: minmax(9rem, 15rem) minmax(0, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  align-items: start;
+  padding: clamp(1.2rem, 3vw, 2.25rem);
+  border: 1px solid rgba(216, 173, 98, .38);
+  background: linear-gradient(135deg, rgba(5, 49, 39, .96), rgba(9, 58, 46, .74));
+}
+
+.artisan-managed-profile-grid > img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border: 1px solid rgba(216, 173, 98, .72);
+  box-shadow: 10px 10px 0 rgba(216, 173, 98, .12);
+}
+
+.artisan-managed-profile-grid h2,
+.profile-editor-page h2 {
+  color: #fff7e8;
+}
+
+.artisan-managed-profile-grid > div > p,
+.profile-experience-note p {
+  max-width: 46rem;
+  color: rgba(255, 247, 232, .82);
+}
+
+.artisan-managed-profile-grid .profile-details {
+  margin: 1rem 0 1.35rem;
+}
+
+.profile-experience-note {
+  padding: 1.2rem 1.35rem;
+  border-left: 2px solid #d8ad62;
+  background: rgba(216, 173, 98, .08);
+}
+
+.profile-save-success {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .9rem 1rem;
+  color: #fff6e5;
+  border: 1px solid rgba(216, 173, 98, .7);
+  background: rgba(116, 76, 35, .28);
+}
+
+.artisan-profile-form textarea {
+  min-height: 8rem;
+}
+
+.profile-image-preview {
+  display: grid;
+  grid-template-columns: minmax(8rem, .75fr) minmax(0, 1.75fr);
+  gap: 1rem;
+  margin-top: .25rem;
+}
+
+.profile-image-preview img {
+  width: 100%;
+  height: 10rem;
+  object-fit: cover;
+  border: 1px solid rgba(216, 173, 98, .55);
+}
+
+.profile-image-preview img:first-child {
+  aspect-ratio: 1;
+}
+
+/* An invalid persisted storage URL must never leave the public studio portrait blank. */
+.artisan-profile-photo-managed {
+  background: radial-gradient(circle at 28% 18%, rgba(218, 167, 81, .24), transparent 30%), linear-gradient(145deg, #193c30, #061c17);
+}
+
+.artisan-profile-photo-managed img {
+  transition: opacity .18s var(--ease-out);
+}
+
+.artisan-profile-media-caption {
+  position: absolute;
+  z-index: 2;
+  top: 15px;
+  left: 15px;
+  padding: 7px 9px;
+  border: 1px solid rgba(232, 190, 102, .45);
+  background: rgba(7, 29, 23, .6);
+  color: #f3dca8;
+  font: 700 8px "Manrope", sans-serif;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 700px) {
+  .artisan-managed-profile-grid,
+  .profile-image-preview {
+    grid-template-columns: 1fr;
+  }
+
+  .artisan-managed-profile-grid > img {
+    width: min(15rem, 100%);
+  }
+}

@@ -1,0 +1,5 @@
+# Craft Detail Interaction Audit Notes
+
+The live Lucknow Zardozi record (`api-129`) loaded successfully in the authenticated Traveller view. The rendered controls were identified as follows: **Live Railway data · Refresh**, **Location record**, **Trace route for detour**, **Find nearby makers**, **Trace this craft route**, **Open interactive trail**, and **Trace detour**. All route-related actions correctly resolve to the existing Planner intent URL with the numeric craft key and Lucknow gateway; only the location overlay and live refresh use in-page handlers.
+
+Direct browser checks passed for the location overlay (including its Google Maps and optional transit links), a Craft Detail detour hand-off, the Planner’s **Confirm origin & trace detour** recalculation, and an in-place live Railway refresh. The detour changed the active Traveller route from Delhi → Varanasi to **Delhi → Lucknow** and returned four live cultural discoveries, including Lucknow Zardozi. No dead or misleading action was found in the audited live record.

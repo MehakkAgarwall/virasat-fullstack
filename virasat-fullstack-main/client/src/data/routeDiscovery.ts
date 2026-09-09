@@ -1,0 +1,66 @@
+// Virāsat route discovery: nationwide craft intelligence remains editorial, traceable, and intentionally mock-only.
+import { crafts, type Craft } from "./mock";
+import type { CulturalOpportunity } from "./opportunities";
+
+export type IndiaLocation = { id: string; name: string; state: string; coordinates: [number, number]; aliases?: string[] };
+export type RouteExperience = { origin: IndiaLocation; destination: IndiaLocation; crafts: Craft[]; opportunities: CulturalOpportunity[]; path: [number, number][]; distance: string; duration: string; regionLabel: string; heritageCoordinates: [number, number] };
+
+export const indiaLocations: IndiaLocation[] = [
+  { id: "delhi", name: "Delhi", state: "Delhi", coordinates: [28.6139, 77.209] },
+  { id: "jaipur", name: "Jaipur", state: "Rajasthan", coordinates: [26.9124, 75.7873] },
+  { id: "mumbai", name: "Mumbai", state: "Maharashtra", coordinates: [19.076, 72.8777] },
+  { id: "ahmedabad", name: "Ahmedabad", state: "Gujarat", coordinates: [23.0225, 72.5714] },
+  { id: "bengaluru", name: "Bengaluru", state: "Karnataka", coordinates: [12.9716, 77.5946], aliases: ["bangalore"] },
+  { id: "mysuru", name: "Mysuru", state: "Karnataka", coordinates: [12.2958, 76.6394], aliases: ["mysore"] },
+  { id: "kolkata", name: "Kolkata", state: "West Bengal", coordinates: [22.5726, 88.3639], aliases: ["calcutta"] },
+  { id: "varanasi", name: "Varanasi", state: "Uttar Pradesh", coordinates: [25.3176, 82.9739], aliases: ["banaras"] },
+  { id: "chennai", name: "Chennai", state: "Tamil Nadu", coordinates: [13.0827, 80.2707] },
+  { id: "madurai", name: "Madurai", state: "Tamil Nadu", coordinates: [9.9252, 78.1198] },
+  { id: "srinagar", name: "Srinagar", state: "Jammu & Kashmir", coordinates: [34.0837, 74.7973] },
+  { id: "jammu", name: "Jammu", state: "Jammu & Kashmir", coordinates: [32.7266, 74.857] },
+  { id: "lucknow", name: "Lucknow", state: "Uttar Pradesh", coordinates: [26.8467, 80.9462] },
+  { id: "kochi", name: "Kochi", state: "Kerala", coordinates: [9.9312, 76.2673] },
+  { id: "hyderabad", name: "Hyderabad", state: "Telangana", coordinates: [17.385, 78.4867] },
+  { id: "bhubaneswar", name: "Bhubaneswar", state: "Odisha", coordinates: [20.2961, 85.8245] },
+  { id: "patna", name: "Patna", state: "Bihar", coordinates: [25.5941, 85.1376] },
+  { id: "udaipur", name: "Udaipur", state: "Rajasthan", coordinates: [24.5854, 73.7125] },
+  { id: "kota", name: "Kota", state: "Rajasthan", coordinates: [25.2138, 75.8648] },
+  { id: "kanchipuram", name: "Kanchipuram", state: "Tamil Nadu", coordinates: [12.8342, 79.7036] },
+  { id: "thanjavur", name: "Thanjavur", state: "Tamil Nadu", coordinates: [10.7867, 79.1378] },
+];
+
+const additionalCrafts: Craft[] = [
+  { id: "blue-pottery", name: "Jaipur Blue Pottery", region: "Jaipur", state: "Rajasthan", description: "Quartz-blue floral pottery shaped by hand, carrying Jaipur’s luminous kiln tradition.", category: "Pottery", gi: true, image: "/manus-storage/virasat-craft-terracotta_b9573ecd.jpg", distance: "7 km from route", detour: "+14 min detour", duration: "50 min studio visit", accent: "#3f7691", coordinates: [26.913, 75.81] },
+  { id: "kota-doria", name: "Kota Doria", region: "Kota", state: "Rajasthan", description: "Air-light checked cotton and silk woven on traditional pit looms beside the Chambal.", category: "Textiles", gi: true, image: "/manus-storage/virasat-craft-weaving_76580db7.jpg", distance: "10 km from route", detour: "+20 min detour", duration: "55 min loom visit", accent: "#d1ad68", coordinates: [25.218, 75.88] },
+  { id: "thewa", name: "Thewa Gold Art", region: "Pratapgarh", state: "Rajasthan", description: "Fine gold filigree fused onto coloured glass in a jewel-like regional art.", category: "Metalwork", odop: true, image: "/manus-storage/virasat-craft-metalwork_f249c877.jpg", distance: "Regional discovery", detour: "+35 min detour", duration: "45 min atelier visit", accent: "#b7863d", coordinates: [24.03, 74.78] },
+  { id: "sujini", name: "Sujini Embroidery", region: "Muzaffarpur", state: "Bihar", description: "Narrative embroidery where stitched figures carry village memory across cloth.", category: "Textiles", odop: true, image: "/manus-storage/virasat-craft-weaving_76580db7.jpg", distance: "Regional discovery", detour: "+24 min detour", duration: "60 min maker visit", accent: "#b56957", coordinates: [26.12, 85.4] },
+  { id: "thanjavur-painting", name: "Thanjavur Painting", region: "Thanjavur", state: "Tamil Nadu", description: "Gilded relief painting built with mineral colour, glass, and patient devotional detail.", category: "Painting", gi: true, image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=1200&q=85", distance: "6 km from route", detour: "+12 min detour", duration: "50 min studio visit", accent: "#a57c39", coordinates: [10.79, 79.14] },
+  { id: "papier-mache", name: "Kashmir Papier-mâché", region: "Srinagar", state: "Jammu & Kashmir", description: "Layered paper, lacquer, and fine hand-painting turn everyday forms into miniature gardens.", category: "Painting", gi: true, image: "https://images.unsplash.com/photo-1581783898377-1c85bf937427?auto=format&fit=crop&w=1200&q=85", distance: "5 km from route", detour: "+10 min detour", duration: "45 min atelier visit", accent: "#6f573e", coordinates: [34.09, 74.81] },
+  { id: "kashmir-willow", name: "Kashmir Willow Craft", region: "Srinagar", state: "Jammu & Kashmir", description: "Willow is bent, carved, and finished into enduring sporting and household objects.", category: "Woodcraft", odop: true, image: "/manus-storage/channapatna-toy-workshop_2297aa2e.jpg", distance: "9 km from route", detour: "+18 min detour", duration: "40 min maker visit", accent: "#876b4d", coordinates: [34.06, 74.78] },
+  { id: "bankura-horse", name: "Bankura Horse", region: "Bankura", state: "West Bengal", description: "Terracotta horses with rhythmic ears and necks that have become an emblem of Bengal’s clay tradition.", category: "Pottery", gi: true, image: "/manus-storage/virasat-craft-terracotta_b9573ecd.jpg", distance: "Regional discovery", detour: "+28 min detour", duration: "55 min kiln visit", accent: "#a75f42", coordinates: [23.24, 87.07] },
+  { id: "kantha", name: "Kantha Embroidery", region: "Kolkata", state: "West Bengal", description: "Running stitches gather old cloth, stories, and patient domestic memory into living textiles.", category: "Textiles", gi: true, image: "/manus-storage/virasat-craft-weaving_76580db7.jpg", distance: "8 km from route", detour: "+15 min detour", duration: "50 min studio visit", accent: "#9a674e", coordinates: [22.59, 88.38] },
+  { id: "banarasi-silk", name: "Banarasi Silk", region: "Varanasi", state: "Uttar Pradesh", description: "Silk and zari meet in dense brocade, woven slowly for ceremonies and inheritance.", category: "Textiles", gi: true, image: "/manus-storage/mysore-silk-loom_465ca0d9.jpg", distance: "4 km from route", detour: "+9 min detour", duration: "60 min loom visit", accent: "#b48a42", coordinates: [25.32, 83.0] },
+  { id: "moradabad-metal", name: "Moradabad Metal Craft", region: "Moradabad", state: "Uttar Pradesh", description: "Engraved brass and mixed-metal objects carry the city’s long export and artisan traditions.", category: "Metalwork", odop: true, image: "/manus-storage/virasat-craft-metalwork_f249c877.jpg", distance: "Regional discovery", detour: "+22 min detour", duration: "45 min workshop", accent: "#93703c", coordinates: [28.84, 78.77] },
+  { id: "patola", name: "Patan Patola", region: "Patan", state: "Gujarat", description: "A double-ikat masterpiece whose colours are planned before the thread meets the loom.", category: "Textiles", gi: true, image: "/manus-storage/virasat-craft-weaving_76580db7.jpg", distance: "Regional discovery", detour: "+25 min detour", duration: "70 min loom visit", accent: "#9c5451", coordinates: [23.85, 72.12] },
+  { id: "rogan", name: "Rogan Art", region: "Nirona", state: "Gujarat", description: "Castor-oil paint is drawn into textiles with a stylus in one of Kutch’s rarest practices.", category: "Painting", gi: true, image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=1200&q=85", distance: "Regional discovery", detour: "+32 min detour", duration: "55 min studio visit", accent: "#8f513b", coordinates: [23.43, 69.33] },
+  { id: "pattachitra", name: "Pattachitra", region: "Raghurajpur", state: "Odisha", description: "Palm-leaf and cloth paintings hold mythic stories in dense natural-pigment linework.", category: "Painting", gi: true, image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=1200&q=85", distance: "Regional discovery", detour: "+22 min detour", duration: "60 min heritage village visit", accent: "#a55f40", coordinates: [19.94, 85.82] },
+  { id: "sambalpuri-ikat", name: "Sambalpuri Ikat", region: "Sambalpur", state: "Odisha", description: "Resist-dyed threads carry geometric rhythm before the cloth is woven.", category: "Textiles", gi: true, image: "/manus-storage/virasat-craft-weaving_76580db7.jpg", distance: "Regional discovery", detour: "+26 min detour", duration: "60 min loom visit", accent: "#a77152", coordinates: [21.47, 83.98] },
+];
+
+export const allIndiaCrafts: Craft[] = [...crafts, ...additionalCrafts];
+const profiles: Record<string, string[]> = {
+  "delhi|jaipur": ["blue-pottery", "kota-doria", "thewa"],
+  "ahmedabad|mumbai": ["patola", "rogan", "bidriware"],
+  "bengaluru|mysuru": ["channapatna", "mysore-silk", "rosewood-inlay"],
+  "kolkata|varanasi": ["bankura-horse", "kantha", "banarasi-silk"],
+  "chennai|madurai": ["kanchipuram", "thanjavur-painting", "mysore-silk"],
+  "jammu|srinagar": ["pashmina", "papier-mache", "kashmir-willow"],
+};
+
+export const locationOptions = indiaLocations.map((location) => location.name);
+export function resolveIndiaLocation(query: string) { const clean = query.trim().toLowerCase(); return indiaLocations.find((location) => location.name.toLowerCase() === clean || location.aliases?.includes(clean)); }
+function distanceKm(a: [number, number], b: [number, number]) { const radians = (value: number) => value * Math.PI / 180; const lat = radians(b[0] - a[0]); const lon = radians(b[1] - a[1]); const h = Math.sin(lat / 2) ** 2 + Math.cos(radians(a[0])) * Math.cos(radians(b[0])) * Math.sin(lon / 2) ** 2; return 6371 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h)); }
+function profileKey(a: IndiaLocation, b: IndiaLocation) { return [a.id, b.id].sort().join("|"); }
+function opportunityFor(craft: Craft, index: number, origin: IndiaLocation, destination: IndiaLocation): CulturalOpportunity { const kinds: CulturalOpportunity["kind"][] = ["Experience", "Artisan", "Heritage"]; const minutes = 8 + index * 7; return { id: `${origin.id}-${destination.id}-${craft.id}`, craftId: craft.id, title: craft.name, kicker: craft.gi ? "GI tagged" : craft.odop ? "ODOP craft" : "Living heritage", kind: kinds[index % kinds.length], location: `${craft.region}, ${craft.state}`, image: craft.image, distance: craft.distance === "Regional discovery" ? `${14 + index * 6} km from your route` : craft.distance, detour: craft.detour === "Plan a dedicated day" ? `+${minutes + 12} min detour` : craft.detour, duration: craft.duration, price: 250 + index * 100, rating: Number((4.9 - index * .1).toFixed(1)), popularity: 94 - index * 6, culturalValue: Math.max(3, 5 - index), summary: craft.description, whyStop: `${craft.region} offers a meaningful craft pause between ${origin.name} and ${destination.name}, connecting the route to a living regional practice.`, availability: index === 0 ? "Slots today" : index === 1 ? "Maker visit available" : "Open this week", icon: index === 0 ? "✦" : index === 1 ? "⌁" : "◌" }; }
+
+export function buildRouteExperience(originInput: string, destinationInput: string): RouteExperience | null { const origin = resolveIndiaLocation(originInput); const destination = resolveIndiaLocation(destinationInput); if (!origin || !destination || origin.id === destination.id) return null; const profile = profiles[profileKey(origin, destination)]; const selected = profile ? profile.map((id) => allIndiaCrafts.find((craft) => craft.id === id)).filter(Boolean) as Craft[] : allIndiaCrafts.filter((craft) => craft.state === origin.state || craft.state === destination.state).slice(0, 3); const routeCrafts = selected.length ? selected : allIndiaCrafts.slice(0, 3); const kilometres = Math.round(distanceKm(origin.coordinates, destination.coordinates) * 1.13); const midpoint: [number, number] = [(origin.coordinates[0] + destination.coordinates[0]) / 2, (origin.coordinates[1] + destination.coordinates[1]) / 2]; return { origin, destination, crafts: routeCrafts, opportunities: routeCrafts.map((craft, index) => opportunityFor(craft, index, origin, destination)), path: [origin.coordinates, ...routeCrafts.map((craft) => craft.coordinates), destination.coordinates], distance: `${kilometres.toLocaleString("en-IN")} km`, duration: `${Math.max(2, Math.round(kilometres / 46))} hr ${Math.round((kilometres / 46 % 1) * 60).toString().padStart(2, "0")} min`, regionLabel: `${origin.state} · ${destination.state}`, heritageCoordinates: midpoint }; }
