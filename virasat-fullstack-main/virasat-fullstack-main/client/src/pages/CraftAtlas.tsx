@@ -115,7 +115,7 @@ export default function CraftAtlas() {
       <div className="container craft-atlas-layout">
         <aside className="craft-atlas-intro">
           <span className="eyebrow"><Compass size={13} />Living Craft Atlas</span>
-          <h1>65 crafts.<br /><em>One living map.</em></h1>
+          <h1>{catalogue.length || 300} crafts.<br /><em>One living map.</em></h1>
           <p>Trace India’s living craft traditions by place, material, and story.</p>
           <div className="craft-atlas-stats" aria-label="Craft Atlas statistics">
             <span><b>{catalogue.length || "—"}</b><small>Live crafts</small></span>

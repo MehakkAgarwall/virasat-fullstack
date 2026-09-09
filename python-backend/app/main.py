@@ -27,7 +27,7 @@ app = FastAPI(title="Kala Trail API", version="0.2.0", lifespan=lifespan)
 
 # CORS: reads a comma-separated list from ALLOWED_ORIGINS in .env if set
 allowed_origins_env = os.getenv("ALLOWED_ORIGINS")
-allowed_origins = allowed_origins_env.split(",") if allowed_origins_env else ["*"]
+allowed_origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()] if allowed_origins_env else ["*"]
 
 app.add_middleware(
     CORSMiddleware,

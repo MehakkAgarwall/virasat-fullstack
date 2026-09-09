@@ -1,4 +1,5 @@
 import { crafts as mockCrafts, type Craft } from "../data/mock";
+import { backendCatalogueFallback } from "../data/backendCatalogue";
 import { apiRequest, API_BASE_URL } from "./api";
 
 export type BackendCraft = {
@@ -79,8 +80,15 @@ const normalizeAtlasCraft = (craft: BackendCraft, index = 0): AtlasCraft => {
   };
 };
 
+const completeFallbackCatalogue: Craft[] = [
+  ...mockCrafts,
+  ...backendCatalogueFallback
+    .filter((record) => !mockCrafts.some((craft) => craft.name.toLowerCase() === record.name.toLowerCase()))
+    .map(normalizeBackendCraft),
+].slice(0, 300);
+
 const fallback = (endpoint: string, error: unknown): CraftCatalogueResult => ({
-  crafts: mockCrafts,
+  crafts: completeFallbackCatalogue,
   source: "mock",
   endpoint,
   fallbackReason: error instanceof Error ? error.message : "The live craft service is unavailable.",
@@ -112,7 +120,7 @@ export async function fetchCraftAtlasCatalogue(): Promise<CraftAtlasCatalogueRes
     };
   } catch (error) {
     return {
-      crafts: mockCrafts.map((craft) => ({
+      crafts: completeFallbackCatalogue.map((craft) => ({
         ...craft,
         sourceCraftId: backendCraftId(craft.id),
         atlasCoordinates: null,
@@ -131,9 +139,10 @@ export async function fetchCraftsByRegion(region: string): Promise<CraftCatalogu
     return { crafts: records.map(normalizeBackendCraft), source: "api", endpoint: `${API_BASE_URL}${endpoint}` };
   } catch (error) {
     const query = region.toLowerCase();
-    const filtered = mockCrafts.filter((craft) => `${craft.region} ${craft.state}`.toLowerCase().includes(query));
+    const fallbackCrafts = completeFallbackCatalogue;
+    const filtered = fallbackCrafts.filter((craft) => `${craft.region} ${craft.state}`.toLowerCase().includes(query));
     return {
-      crafts: filtered.length ? filtered : mockCrafts,
+      crafts: filtered.length ? filtered : fallbackCrafts,
       source: "mock",
       endpoint: `${API_BASE_URL}${endpoint}`,
       fallbackReason: error instanceof Error ? error.message : "The live craft service is unavailable.",
@@ -147,7 +156,8 @@ export async function fetchCraftById(id: number): Promise<CraftLookupResult> {
     const record = await apiRequest<BackendCraft>(endpoint);
     return { craft: normalizeBackendCraft(record), source: "api", endpoint: `${API_BASE_URL}${endpoint}` };
   } catch (error) {
-    const fallbackCraft = mockCrafts[0];
+    const fallbackCraft = completeFallbackCatalogue.find((craft) => backendCraftId(craft.id) === id)
+      ?? completeFallbackCatalogue[0];
     return {
       craft: fallbackCraft,
       source: "mock",

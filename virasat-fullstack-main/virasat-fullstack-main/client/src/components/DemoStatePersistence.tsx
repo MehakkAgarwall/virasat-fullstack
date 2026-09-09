@@ -11,6 +11,7 @@ import {
 import { trpc } from "../lib/trpc";
 
 const scopes: DemoStateScope[] = ["traveller", "artisan", "authority"];
+const persistenceEnabled = !import.meta.env.DEV;
 
 /** Live craft detail is a read-only Railway-backed view and does not need a managed demo-state sync. */
 export const shouldSyncDemoStateForPathname = (pathname: string) => !/^\/craft\/api-\d+$/.test(pathname);
@@ -27,12 +28,13 @@ export function DemoStatePersistence() {
   const subjectKey = session ? `demo-${session.id}` : visitorSubject;
   const hydratedFor = useRef<string | null>(null);
   const save = trpc.demoState.save.useMutation();
-  const { data } = trpc.demoState.list.useQuery({ subjectKey }, { retry: 1 });
+  const { data } = trpc.demoState.list.useQuery({ subjectKey }, { enabled: persistenceEnabled, retry: 1 });
 
   useEffect(() => {
     const onStateChange = (event: Event) => {
       const detail = (event as CustomEvent<DemoStateChange>).detail;
       if (!detail) return;
+      if (!persistenceEnabled) return;
       save.mutate({ subjectKey, scope: detail.scope, payload: detail.payload });
     };
     window.addEventListener(DEMO_STATE_CHANGE_EVENT, onStateChange);
@@ -40,7 +42,7 @@ export function DemoStatePersistence() {
   }, [save, subjectKey]);
 
   useEffect(() => {
-    if (!data || hydratedFor.current === subjectKey) return;
+    if (!persistenceEnabled || !data || hydratedFor.current === subjectKey) return;
     hydratedFor.current = subjectKey;
 
     const savedScopes = new Set(data.map((entry) => entry.scope));

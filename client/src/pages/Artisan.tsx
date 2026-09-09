@@ -14,7 +14,17 @@ import { BOOKING_SYNC_INTERVAL_MS, bookingRequestLabel } from "../services/booki
 import { ArtisanBookingInbox } from "../components/ArtisanBookingInbox";
 import { VoiceAssistant } from "../components/VoiceAssistant";
 
-const artisanItems: RoleNavItem[] = [{ id: "dashboard", label: "Dashboard", icon: BarChart3 }, { id: "products", label: "Products", icon: Package }, { id: "add-product", label: "Add Product", icon: Plus }, { id: "experiences", label: "Experiences", icon: CalendarDays }, { id: "orders", label: "Orders", icon: ShoppingBag }, { id: "enquiries", label: "Product Enquiries", icon: Send }, { id: "interest", label: "Booking Inbox", icon: Users }, { id: "profile", label: "Profile", icon: UserRound }];
+const artisanItems: RoleNavItem[] = [
+  { id: "dashboard", label: "Dashboard", icon: BarChart3 },
+  { id: "products", label: "Products", icon: Package },
+  { id: "add-product", label: "Add Product", icon: Plus },
+  { id: "experiences", label: "Experiences", icon: CalendarDays },
+  { id: "orders", label: "Orders", icon: ShoppingBag },
+  { id: "enquiries", label: "Product Enquiries", icon: Send },
+  { id: "interest", label: "Booking Inbox", icon: Users },
+  { id: "profile", label: "Profile", icon: UserRound },
+];
+
 const persistenceEnabled = !import.meta.env.DEV;
 function money(value: number) { return `₹${value.toLocaleString("en-IN")}`; }
 type ArtisanPublicProfile = { artisanKey: string; primaryCraftId: number | null; studioName: string; personalName: string; craftSpecialization: string; location: string; state: string; yearsOfPractice: number; bio: string; profilePhotoUrl: string; coverPhotoUrl: string; publicContact: string; languages: string; experienceInfo: string; };
@@ -35,7 +45,6 @@ export default function Artisan() {
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [editingExperienceId, setEditingExperienceId] = useState<string | null>(null);
   const [railwayCatalogue, setRailwayCatalogue] = useState<CraftCatalogueResult | null>(null);
-  const utils = trpc.useUtils();
   const profileQuery = trpc.artisanProfile.get.useQuery({ artisanKey }, { enabled: persistenceEnabled });
   const managedExperiencesQuery = trpc.experience.listForArtisan.useQuery({ artisanKey }, { enabled: persistenceEnabled });
   const managedProductsQuery = trpc.product.listForArtisan.useQuery({ artisanKey }, { enabled: persistenceEnabled });

@@ -8,10 +8,7 @@ import { getPublishedArtisan, getPublishedCraftJourneyForArtisan, getPublishedEx
 import { trpc } from "../lib/trpc";
 import { getPublicProfileVisualSources } from "../services/artisanProfileVisual";
 import { ArtisanProductShelf } from "../components/ShopCraftSection";
-<<<<<<< HEAD
 import { artisanProfilesFallback } from "../data/artisanProfilesFallback";
-=======
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
 
 type ManagedProfileMedia = {
   personalName: string;
@@ -63,7 +60,6 @@ export default function ArtisanProfile() {
   const publicExperience = getPublishedExperiencesForArtisan(legacyArtisan?.slug)[0];
   const publishedJourney = getPublishedCraftJourneyForArtisan(legacyArtisan?.slug);
 
-<<<<<<< HEAD
   const fallbackProfile = artisanProfilesFallback.find((item) => item.artisanKey === slug);
   const profile = managedProfileQuery.data ?? (fallbackProfile ? {
     ...fallbackProfile,
@@ -72,9 +68,6 @@ export default function ArtisanProfile() {
     languages: "",
     experienceInfo: "A published artisan record connected to the Virāsat craft catalogue.",
   } : undefined);
-=======
-  const profile = managedProfileQuery.data;
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
   const isLoading = managedProfileQuery.isLoading && slug.length >= 8;
   const hasRealProfile = Boolean(profile);
 

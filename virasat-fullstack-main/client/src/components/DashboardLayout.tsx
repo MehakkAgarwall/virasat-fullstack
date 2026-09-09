@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { useAuth } from "../contexts/AuthContext";
-=======
-import { useAuth } from "@/_core/hooks/useAuth";
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -50,12 +46,8 @@ export default function DashboardLayout({
     const saved = localStorage.getItem(SIDEBAR_WIDTH_KEY);
     return saved ? parseInt(saved, 10) : DEFAULT_WIDTH;
   });
-<<<<<<< HEAD
   const { session: user } = useAuth();
   const loading = false;
-=======
-  const { loading, user } = useAuth();
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
 
   useEffect(() => {
     localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());
@@ -113,11 +105,7 @@ function DashboardLayoutContent({
   children,
   setSidebarWidth,
 }: DashboardLayoutContentProps) {
-<<<<<<< HEAD
   const { session: user, logout } = useAuth();
-=======
-  const { user, logout } = useAuth();
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
   const [location, setLocation] = useLocation();
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";

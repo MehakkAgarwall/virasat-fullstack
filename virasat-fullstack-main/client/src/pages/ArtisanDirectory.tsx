@@ -6,14 +6,9 @@ import { Link } from "wouter";
 import { MobileBottomNav } from "../components/MobileBottomNav";
 import { TopNav } from "../components/TopNav";
 import { trpc } from "../lib/trpc";
-<<<<<<< HEAD
 import { artisanProfilesFallback } from "../data/artisanProfilesFallback";
 
 const DEFAULT_COVER = "https://commons.wikimedia.org/wiki/Special:FilePath/Lota%20brass.JPG";
-=======
-
-const DEFAULT_COVER = "/manus-storage/mysuru-heritage-pavilion_6c4424ad.jpg";
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
 
 function ShilpGuruBadge() {
   return (
@@ -75,12 +70,8 @@ type ArtisanListItem = {
 export default function ArtisanDirectory() {
   const [query, setQuery] = useState("");
   const artisansQuery = trpc.artisanProfile.listAll.useQuery();
-<<<<<<< HEAD
   const liveArtisans = (artisansQuery.data ?? []) as ArtisanListItem[];
   const artisans = liveArtisans.length ? liveArtisans : artisanProfilesFallback;
-=======
-  const artisans = (artisansQuery.data ?? []) as ArtisanListItem[];
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
 
   const normalizedQuery = query.trim().toLowerCase();
   const filtered = useMemo(() => {

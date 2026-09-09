@@ -1,8 +1,5 @@
 import { crafts as mockCrafts, type Craft } from "../data/mock";
-<<<<<<< HEAD
 import { backendCatalogueFallback } from "../data/backendCatalogue";
-=======
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
 import { apiRequest, API_BASE_URL } from "./api";
 
 export type BackendCraft = {
@@ -83,7 +80,6 @@ const normalizeAtlasCraft = (craft: BackendCraft, index = 0): AtlasCraft => {
   };
 };
 
-<<<<<<< HEAD
 const completeFallbackCatalogue: Craft[] = [
   ...mockCrafts,
   ...backendCatalogueFallback
@@ -93,10 +89,6 @@ const completeFallbackCatalogue: Craft[] = [
 
 const fallback = (endpoint: string, error: unknown): CraftCatalogueResult => ({
   crafts: completeFallbackCatalogue,
-=======
-const fallback = (endpoint: string, error: unknown): CraftCatalogueResult => ({
-  crafts: mockCrafts,
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
   source: "mock",
   endpoint,
   fallbackReason: error instanceof Error ? error.message : "The live craft service is unavailable.",
@@ -128,11 +120,7 @@ export async function fetchCraftAtlasCatalogue(): Promise<CraftAtlasCatalogueRes
     };
   } catch (error) {
     return {
-<<<<<<< HEAD
       crafts: completeFallbackCatalogue.map((craft) => ({
-=======
-      crafts: mockCrafts.map((craft) => ({
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
         ...craft,
         sourceCraftId: backendCraftId(craft.id),
         atlasCoordinates: null,
@@ -151,16 +139,10 @@ export async function fetchCraftsByRegion(region: string): Promise<CraftCatalogu
     return { crafts: records.map(normalizeBackendCraft), source: "api", endpoint: `${API_BASE_URL}${endpoint}` };
   } catch (error) {
     const query = region.toLowerCase();
-<<<<<<< HEAD
     const fallbackCrafts = completeFallbackCatalogue;
     const filtered = fallbackCrafts.filter((craft) => `${craft.region} ${craft.state}`.toLowerCase().includes(query));
     return {
       crafts: filtered.length ? filtered : fallbackCrafts,
-=======
-    const filtered = mockCrafts.filter((craft) => `${craft.region} ${craft.state}`.toLowerCase().includes(query));
-    return {
-      crafts: filtered.length ? filtered : mockCrafts,
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
       source: "mock",
       endpoint: `${API_BASE_URL}${endpoint}`,
       fallbackReason: error instanceof Error ? error.message : "The live craft service is unavailable.",
@@ -174,12 +156,8 @@ export async function fetchCraftById(id: number): Promise<CraftLookupResult> {
     const record = await apiRequest<BackendCraft>(endpoint);
     return { craft: normalizeBackendCraft(record), source: "api", endpoint: `${API_BASE_URL}${endpoint}` };
   } catch (error) {
-<<<<<<< HEAD
     const fallbackCraft = completeFallbackCatalogue.find((craft) => backendCraftId(craft.id) === id)
       ?? completeFallbackCatalogue[0];
-=======
-    const fallbackCraft = mockCrafts[0];
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
     return {
       craft: fallbackCraft,
       source: "mock",

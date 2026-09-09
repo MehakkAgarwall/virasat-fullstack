@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-web: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-=======
 web: uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27

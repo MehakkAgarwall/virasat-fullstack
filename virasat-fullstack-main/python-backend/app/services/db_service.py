@@ -8,13 +8,9 @@ Import get_connection() anywhere you need to talk to the DB.
 """
 
 import os
-<<<<<<< HEAD
 import csv
 import logging
 from pathlib import Path
-=======
-import logging
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
 import mysql.connector
 from mysql.connector import Error, pooling
 from dotenv import load_dotenv
@@ -29,53 +25,15 @@ def _get_pool():
     """Lazily creates the connection pool on first use."""
     global _pool
     if _pool is None:
-<<<<<<< HEAD
-=======
-        host = os.getenv("MYSQL_HOST")
-        port = int(os.getenv("MYSQL_PORT", 3306))
-        user = os.getenv("MYSQL_USER", "root")
-        password = os.getenv("MYSQL_PASSWORD", "")
-        database = os.getenv("MYSQL_DATABASE", "kalatrail")
-
-        # Support cloud URLs (e.g. Railway/Render/Fly MYSQL_URL or DATABASE_URL)
-        db_url = os.getenv("MYSQL_URL") or os.getenv("DATABASE_URL")
-        if db_url and not os.getenv("MYSQL_HOST"):
-            from urllib.parse import urlparse
-            try:
-                parsed = urlparse(db_url)
-                if parsed.hostname:
-                    host = parsed.hostname
-                if parsed.port:
-                    port = parsed.port
-                if parsed.username:
-                    user = parsed.username
-                if parsed.password:
-                    password = parsed.password
-                if parsed.path:
-                    database = parsed.path.lstrip("/")
-            except Exception as parse_err:
-                logger.warning(f"Could not parse database URL: {parse_err}")
-
-        host = host or "localhost"
-
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
         try:
             _pool = pooling.MySQLConnectionPool(
                 pool_name="kalatrail_pool",
                 pool_size=5,
-<<<<<<< HEAD
                 host=os.getenv("MYSQL_HOST", "localhost"),
                 port=int(os.getenv("MYSQL_PORT", 3306)),
                 user=os.getenv("MYSQL_USER", "root"),
                 password=os.getenv("MYSQL_PASSWORD", ""),
                 database=os.getenv("MYSQL_DATABASE", "kalatrail"),
-=======
-                host=host,
-                port=port,
-                user=user,
-                password=password,
-                database=database,
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
             )
         except Error as e:
             logger.error(f"Failed to create MySQL connection pool: {e}")
@@ -103,7 +61,6 @@ def init_db():
     try:
         conn = get_connection()
         cursor = conn.cursor()
-<<<<<<< HEAD
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS crafts (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -142,8 +99,6 @@ def init_db():
             INDEX idx_artisan_craft (primaryCraftId)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         """)
-=======
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
         create_table_sql = """
         CREATE TABLE IF NOT EXISTS artisan_interests (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -158,7 +113,6 @@ def init_db():
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         """
         cursor.execute(create_table_sql)
-<<<<<<< HEAD
         csv_path = Path(__file__).resolve().parents[1] / "data" / "crafts_seed.csv"
         with csv_path.open(newline="", encoding="utf-8-sig") as handle:
             rows = list(csv.DictReader(handle))
@@ -215,15 +169,9 @@ def init_db():
                 ],
             )
             logger.info("Loaded artisan profile catalogue: %s records from %s", len(artisan_rows), artisan_csv_path)
-=======
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27
         conn.commit()
         cursor.close()
         conn.close()
         logger.info("Database initialization completed successfully.")
     except Exception as e:
-<<<<<<< HEAD
         logger.warning(f"init_db non-fatal warning: {e}")
-=======
-        logger.warning(f"init_db non-fatal warning: {e}")
->>>>>>> 35fc9b5963c334ea82df9f5d89e5d8978f131e27

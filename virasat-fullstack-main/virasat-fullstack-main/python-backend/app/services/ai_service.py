@@ -137,44 +137,44 @@ def _call_gemini(prompt: str, timeout: int = 8, temperature: float = 0.5) -> str
 
 def generate_batch_craft_descriptions(crafts: list) -> dict:
     """
-    Takes a list of craft dicts (each needs: id, name, category, state, district, description).
-    Returns a dict mapping craft id -> generated ai_description string.
+    Given a list of craft dicts (each having 'id', 'name', 'category', 'state', 'district', 'description'),
+    generates tourist-friendly blurbs for all of them in a single batch prompt.
+    Returns a dict mapping craft id -> generated blurb string.
     """
     if not crafts:
         return {}
 
-    craft_list_text = "\n".join(
-        f'{{"id": {c["id"]}, "name": "{c["name"]}", "category": "{c["category"]}", '
-        f'"state": "{c["state"]}", "district": "{c["district"]}", '
-        f'"facts": "{c["description"]}"}}'
-        for c in crafts
-    )
+    craft_entries = []
+    for c in crafts:
+        craft_entries.append(
+            f"ID: {c['id']}\n"
+            f"Name: {c['name']}\n"
+            f"Category: {c.get('category', '')}\n"
+            f"Region: {c.get('district', '')}, {c.get('state', '')}\n"
+            f"Factual description: {c.get('description', '')}\n"
+        )
 
-    prompt = f"""You are writing short, engaging tourist-facing blurbs for a set of traditional Indian handicrafts.
+    prompt = f"""You are a master storyteller for a cultural travel app promoting Indian handicrafts.
+For each craft below, write a warm, engaging 2-3 sentence description for a tourist discovering it for the first time.
+Highlight what makes it special and inviting without inventing facts.
 
-Here is a JSON list of crafts, each with an id and factual details:
-[{craft_list_text}]
+Return ONLY a valid JSON object mapping each craft's integer ID (as a string key) to its description string.
+Example format: {{"1": "...", "2": "..."}}
+Do NOT wrap in markdown code blocks or add any other text.
 
-For EACH craft in the list, write a warm, engaging 2-3 sentence description for a tourist
-discovering it for the first time. Highlight what makes it special. Do not invent facts,
-statistics, or dates not implied by the given "facts" field.
+Crafts to describe:
+{"---".join(craft_entries)}"""
 
-Return your answer as a single valid JSON array, with one object per craft, in this exact format:
-[{{"id": <the same id>, "description": "<your generated description>"}}, ...]
-
-Rules:
-- Return ONLY the JSON array. No markdown code fences, no explanation, no extra text.
-- Include EVERY craft id from the input list, in any order.
-- Each description must be plain text, no markdown formatting inside it."""
-
-    raw_response = _call_gemini(prompt, temperature=0.5)
-
-    cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw_response.strip())
+    raw_response = _call_gemini(prompt, timeout=20)
+    cleaned = raw_response.strip()
+    if cleaned.startswith("```"):
+        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned)
+        cleaned = re.sub(r"\s*```$", "", cleaned)
 
     try:
-        parsed = json.loads(cleaned)
-        return {item["id"]: item["description"] for item in parsed if "id" in item and "description" in item}
-    except (json.JSONDecodeError, KeyError, TypeError) as e:
+        data = json.loads(cleaned)
+        return {int(k): str(v) for k, v in data.items()}
+    except Exception as e:
         logger.warning(f"Failed to parse batch response as JSON: {e}. Raw response: {raw_response[:300]}")
         return {}
 
@@ -183,7 +183,8 @@ def generate_craft_description(name: str, category: str, state: str, district: s
     """
     Rewrites a dry factual craft description into a warm, tourist-friendly 2-3 sentence blurb.
     """
-    prompt = f"""You are writing a short, engaging blurb for a tourism app about a traditional Indian handicraft.
+    prompt = f"""You are a master storyteller for a cultural travel app promoting Indian handicrafts.
+Here is the factual registry information for a craft:
 
 Craft name: {name}
 Category: {category}
